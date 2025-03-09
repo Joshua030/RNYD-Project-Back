@@ -1,22 +1,34 @@
 package com.rnyd.rnyd.mapper.user;
 
 import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.request.UserSignUpRequest;
 import com.rnyd.rnyd.model.UserEntity;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
-    public UserDTO UserEntityToUserDTO(UserEntity entity){
-        return new UserDTO(entity.getName(),
-                entity.getSurname(),
-                entity.getEmail(),
-                entity.getKeyword(),
-                entity.getBirth_date());
-    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    // UserDTO.builder().name(entity.getName).surname
-    public UserEntity UserDTOToUseDTO(UserDTO entity){
-        return new UserEntity(entity.getName(),entity.getSurname(),entity.getEmail(),entity.getBirth_date(),entity.getKeyword());
-    }
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "surname", target = "surname")
+    @Mapping(source = "keyword", target = "keyword")
+    @Mapping(source = "birth_date", target = "birth_date")
+    UserDTO toDto(UserEntity entity);
 
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "surname", target = "surname")
+    @Mapping(source = "keyword", target = "keyword")
+    @Mapping(source = "birth_date", target = "birth_date")
+    UserEntity toEntity(UserDTO userDTO);
+
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "surname", target = "surname")
+    @Mapping(source = "keyword", target = "keyword")
+    @Mapping(source = "birth_date", target = "birth_date")
+    UserEntity toEntity(UserSignUpRequest userDTO);
 }
