@@ -1,7 +1,6 @@
 package com.rnyd.rnyd.service.signUp;
 
-import com.rnyd.rnyd.dto.request.UserSignUpRequest;
-import com.rnyd.rnyd.dto.response.UserResponse;
+import com.rnyd.rnyd.exceptionHandler.exceptions.RegisterException;
 import com.rnyd.rnyd.mapper.user.UserMapper;
 import com.rnyd.rnyd.dto.UserDTO;
 import com.rnyd.rnyd.model.UserEntity;
@@ -35,13 +34,14 @@ public class SignUpService implements SignUpUseCase {
     }
 
     @Override
-    public ResponseEntity<UserResponse> register(UserSignUpRequest userSignUpRequest) {
-
+    public ResponseEntity<UserDTO> register(UserDTO userSignUpRequest) {
+        // TODO VALIDAR CAMPOS
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userSignUpRequest.getEmail());
 
         // En el caso de que existe un usuario con ese correo devolver msg error
+        // TODO NO ES CORRECTO
         if(userEntityOptional.isPresent()){
-           return ResponseEntity.badRequest().body(new UserResponse(USER_EMAIL_ALREADY_EXISTS.getMessage()));
+            throw new RegisterException(USER_EMAIL_ALREADY_EXISTS.getMessage());
         }
 
         // Guardamos nuestro usuario en BBDD
@@ -50,6 +50,4 @@ public class SignUpService implements SignUpUseCase {
         // Devolvemos un CREATED al controller
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
-
 }

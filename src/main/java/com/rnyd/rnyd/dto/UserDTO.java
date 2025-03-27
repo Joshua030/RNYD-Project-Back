@@ -1,21 +1,31 @@
 package com.rnyd.rnyd.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rnyd.rnyd.utils.constants.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 public class UserDTO {
-    public UserDTO(String name, String surname, String email, String keyword, LocalDate birth_date) {
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.keyword = keyword;
-        this.birth_date = birth_date;
-    }
 
-    private String name, surname, email, keyword;
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("surname")
+    private String surname;
+
+    @JsonProperty("birth_date")
     private LocalDate birth_date;
+
+    @JsonProperty("keyword")
+    private String keyword;
+
+    @JsonProperty("role")
+    private Roles role;
 
     public String getName() {
         return name;
@@ -35,5 +45,42 @@ public class UserDTO {
 
     public LocalDate getBirth_date() {
         return birth_date;
+    }
+
+    public UserDTO(String name, String surname, String email, String keyword, LocalDate birth_date, Roles role) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.keyword = keyword;
+        this.birth_date = birth_date;
+        this.role = role;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void setBirth_date(LocalDate birth_date) {
+        this.birth_date = birth_date;
+    }
+
+    public Roles getRole() {
+        return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
     }
 }

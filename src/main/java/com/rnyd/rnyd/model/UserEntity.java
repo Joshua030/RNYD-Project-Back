@@ -1,11 +1,10 @@
 package com.rnyd.rnyd.model;
 
+import com.rnyd.rnyd.utils.constants.Roles;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 
 @Entity
-// CUIDADO COMILLAS NECESARIAS
 @Table(name = "\"user\"")
 public class UserEntity {
 
@@ -13,20 +12,70 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email",length = 100, nullable = false, unique = true)
+    @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "name",length = 20 ,nullable = false)
+    @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @Column(name = "surname",length = 75 ,nullable = false)
+    @Column(name = "surname", length = 75, nullable = false)
     private String surname;
 
-    @Column(name = "birth_date",nullable = false)
+    @Column(name = "birth_date", nullable = false)
     private LocalDate birth_date;
 
-    @Column(name = "keyword",length = 100 , nullable = false)
+    @Column(name = "keyword", length = 100, nullable = false)
     private String keyword;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Roles role;
+
+    public void setRole(Roles role) {
+        this.role = role;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public void setBirth_date(LocalDate birth_date) {
+        this.birth_date = birth_date;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+
+    public UserEntity() {
+    }
+
+    public UserEntity(String email, String name, String surname, LocalDate birth_date, String keyword, Roles role) {
+        this.email = email;
+        this.name = name;
+        this.surname = surname;
+        this.birth_date = birth_date;
+        this.keyword = keyword;
+        this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     public String getEmail() {
         return email;
@@ -48,17 +97,7 @@ public class UserEntity {
         return keyword;
     }
 
-    public UserEntity(String email, String name, String surname, LocalDate birth_date, String keyword) {
-        this.email = email;
-        this.name = name;
-        this.surname = surname;
-        this.birth_date = birth_date;
-        this.keyword = keyword;
-    }
-
-    public Long getId() {
-        return id;
-    }
-    public UserEntity() {
+    public Roles getRole() {
+        return role;
     }
 }

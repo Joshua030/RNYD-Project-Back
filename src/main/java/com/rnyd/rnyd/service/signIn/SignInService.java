@@ -1,53 +1,46 @@
 package com.rnyd.rnyd.service.signIn;
 
-import com.rnyd.rnyd.dto.request.UserSignInRequest;
-import com.rnyd.rnyd.dto.response.UserResponse;
+import com.rnyd.rnyd.dto.UserDTO;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.SignInUseCase;
+import com.rnyd.rnyd.utils.security.JwtUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
+import javax.crypto.SecretKey;
+import java.security.Key;
+import java.util.Date;
 import java.util.Optional;
 
+@Service
 public class SignInService implements SignInUseCase {
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Override
-    public String generateJWT(String user, String role) {
-        return "";
-    }
-
-    @Override
-    public String validateJWT(String token) {
-        return "";
-    }
-
-    @Override
-    public ResponseEntity<String> signIn(UserSignInRequest userSignInRequest) {
-
-        // Validar que existe en BBDD y la contraseña coincide
+    public ResponseEntity<String> signIn(UserDTO userSignInRequest) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userSignInRequest.getEmail());
 
-        if(userEntityOptional.isPresent() && checkPassword(userEntityOptional.get(), userSignInRequest)){
-            // Generar Token por usuario y role (por ahora todos user
-            return ResponseEntity.ok(generateJWT(userSignInRequest.getEmail(),"user"));
+        if (userEntityOptional.isPresent() && checkPassword(userEntityOptional.get(), userSignInRequest)) {
+            String token = jwtUtils.generateJWT(userSignInRequest.getEmail(), userEntityOptional.get().getRole().name());
+            return ResponseEntity.ok(token);
         }
 
-
-        // Devolver token de inicio de sesion junto al response
-
-        // Devolver mensaje de error si no coinciden
-
-
-        return null;
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email o contraseña inválida.");
     }
 
-    private boolean checkPassword(UserEntity userEntity, UserSignInRequest userSignInRequest){
+    private boolean checkPassword(UserEntity userEntity, UserDTO userSignInRequest) {
         return userEntity.getKeyword().equals(userSignInRequest.getKeyword());
     }
-
 }
