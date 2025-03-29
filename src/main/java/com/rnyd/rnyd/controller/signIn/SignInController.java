@@ -4,6 +4,7 @@ import com.rnyd.rnyd.dto.UserDTO;
 import com.rnyd.rnyd.service.jwt.JwtService;
 import com.rnyd.rnyd.service.use_case.SignInUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +12,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class SignInController {
 
-    @Autowired
     private SignInUseCase signInUseCase;
 
-    @Autowired
     private JwtService jwtService;
+
+    public SignInController(SignInUseCase signInUseCase, JwtService jwtService) {
+        this.signInUseCase = signInUseCase;
+        this.jwtService = jwtService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<String> signIn(@RequestBody UserDTO userSignInRequest) {
-        return signInUseCase.signIn(userSignInRequest);
+        String token = signInUseCase.signIn(userSignInRequest);
+        if(token != null)
+            return ResponseEntity.ok(token);
+        else
+            return new ResponseEntity<>("Email o contraseña inválida.", HttpStatus.UNAUTHORIZED);
     }
 
     // Hablar con front por si quiere ser por header o param

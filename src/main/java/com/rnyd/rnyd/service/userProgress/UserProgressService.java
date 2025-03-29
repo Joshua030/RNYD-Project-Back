@@ -5,26 +5,40 @@ import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.model.UserProgressEntity;
 import com.rnyd.rnyd.repository.user.UserProgressRepository;
 import com.rnyd.rnyd.repository.user.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rnyd.rnyd.service.jwt.JwtService;
+import com.rnyd.rnyd.service.jwt.UserDetailsServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.rnyd.rnyd.utils.constants.Variables.USER_EMAIL_DOES_NOT_EXISTS;
+
 @Service
 public class UserProgressService {
 
-    @Autowired
     private UserProgressRepository userProgressRepository;
 
-    @Autowired
     private UserRepository userRepository;
 
+    private UserDetailsServiceImpl userDetailsService;
+
+    private JwtService jwtService;
+
+    public UserProgressService(UserProgressRepository userProgressRepository, UserRepository userRepository,
+                               JwtService jwtService, UserDetailsServiceImpl userDetailsService) {
+        this.userProgressRepository = userProgressRepository;
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
+    }
+
     public String saveProgress(String userEmail, UserProgressRequest request) {
+
         Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
         if (userOpt.isEmpty()) {
-            return "Usuario no encontrado.";
+            return USER_EMAIL_DOES_NOT_EXISTS;
         }
 
         UserEntity user = userOpt.get();
@@ -44,7 +58,6 @@ public class UserProgressService {
             return "Nueva foto de progreso guardada.";
         }
     }
-
     public List<UserProgressEntity> getUserProgress(String userEmail) {
         Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
         return userOpt.map(userProgressRepository::findByUserOrderByProgressDateDesc).orElse(null);

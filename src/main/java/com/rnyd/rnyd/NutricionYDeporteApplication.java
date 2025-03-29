@@ -14,5 +14,4 @@ public class NutricionYDeporteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(NutricionYDeporteApplication.class, args);
 	}
-
 }

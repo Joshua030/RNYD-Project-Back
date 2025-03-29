@@ -3,7 +3,6 @@ package com.rnyd.rnyd.controller.userProgress;
 import com.rnyd.rnyd.dto.UserProgressRequest;
 import com.rnyd.rnyd.model.UserProgressEntity;
 import com.rnyd.rnyd.service.userProgress.UserProgressService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +12,11 @@ import java.util.List;
 @RequestMapping("/progress")
 public class UserProgressController {
 
-    @Autowired
     private UserProgressService userProgressService;
+
+    public UserProgressController(UserProgressService userProgressService) {
+        this.userProgressService = userProgressService;
+    }
 
     @PostMapping("/upload/{email}")
     public ResponseEntity<String> uploadProgress(@PathVariable String email, @RequestBody UserProgressRequest request) {

@@ -22,22 +22,24 @@ import java.util.Optional;
 @Service
 public class SignInService implements SignInUseCase {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private JwtUtils jwtUtils;
 
+    public SignInService(UserRepository userRepository, JwtUtils jwtUtils) {
+        this.userRepository = userRepository;
+        this.jwtUtils = jwtUtils;
+    }
+
     @Override
-    public ResponseEntity<String> signIn(UserDTO userSignInRequest) {
+    public String signIn(UserDTO userSignInRequest) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userSignInRequest.getEmail());
 
         if (userEntityOptional.isPresent() && checkPassword(userEntityOptional.get(), userSignInRequest)) {
-            String token = jwtUtils.generateJWT(userSignInRequest.getEmail(), userEntityOptional.get().getRole().name());
-            return ResponseEntity.ok(token);
+            return jwtUtils.generateJWT(userSignInRequest.getEmail(), userEntityOptional.get().getRole().name());
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email o contraseña inválida.");
+        return null;
     }
 
     private boolean checkPassword(UserEntity userEntity, UserDTO userSignInRequest) {
