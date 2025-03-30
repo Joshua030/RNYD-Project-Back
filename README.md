@@ -53,7 +53,11 @@ Este repositorio contiene los endpoints principales para autenticación, registr
     {
       "email": "nuevo@example.com",
       "password": "segura123",
-      "name": "Nuevo Usuario"
+      "name": "nombre",
+      "surname": "apellido",
+      "keyword" : "1234",
+      "birth_date" : "2025-03-29",
+      "role" : "USER" 
     }
     ```
 - **Respuestas:**
