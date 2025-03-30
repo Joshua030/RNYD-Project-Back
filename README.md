@@ -91,6 +91,17 @@ Este repositorio contiene los endpoints principales para autenticación, registr
   - `200 OK`: Lista de `UserProgressEntity`.
   - `404 NOT FOUND`: Si no hay registros.
 
-📌 **Contribución**: Si deseas contribuir, envía un PR.
-📌 **Contacto**: Para dudas, crea un issue. 🚀
+# 📌 Tabla de Endpoints
+
+Esta tabla resume todos los endpoints disponibles en la API.
+
+| Módulo | Método | URL | Descripción | Parámetros | Respuestas |
+|--------|--------|-----|-------------|------------|------------|
+| **Autenticación** | `POST` | `/auth/signin` | Iniciar sesión y obtener un token JWT. | `UserDTO` (body) | `200 OK`: Token JWT<br>`401 UNAUTHORIZED`: Credenciales inválidas |
+| **Autenticación** | `POST` | `/auth/validate-token` | Validar si un token es válido o ha expirado. | `token` (query param) | `200 OK`: Token válido<br>`401 UNAUTHORIZED`: Token inválido o expirado |
+| **Registro de Usuarios** | `GET` | `/signup` | Obtener la lista de usuarios registrados. | Ninguno | `200 OK`: Lista de usuarios |
+| **Registro de Usuarios** | `POST` | `/signup/register` | Registrar un nuevo usuario. | `UserDTO` (body) | `200 OK`: Usuario registrado<br>`400 BAD REQUEST`: Error en el registro |
+| **Progreso del Usuario** | `POST` | `/progress/upload/{email}` | Subir progreso del usuario. | `email` (path param), `UserProgressRequest` (body) | `200 OK`: Progreso guardado |
+| **Progreso del Usuario** | `GET` | `/progress/history/{email}` | Obtener historial de progreso del usuario. | `email` (path param) | `200 OK`: Lista de progresos<br>`404 NOT FOUND`: No hay registros |
+
 
