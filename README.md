@@ -77,9 +77,10 @@ Este repositorio contiene los endpoints principales para autenticación, registr
   - `UserProgressRequest` (JSON body)
     ```json
     {
-      "level": 5,
-      "score": 1500,
-      "timestamp": "2024-03-30T12:34:56Z"
+      "imageUrl": "https://example.com/image1.jpg",
+      "weight": 72.5,
+      "height": 1.75,
+      "progressDate": "2025-03-29"
     }
     ```
 - **Respuestas:**
