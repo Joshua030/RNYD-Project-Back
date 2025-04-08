@@ -1,6 +1,7 @@
 package com.rnyd.rnyd.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rnyd.rnyd.utils.constants.Plans;
 import com.rnyd.rnyd.utils.constants.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,17 @@ public class UserDTO {
     @JsonProperty("role")
     private Roles role;
 
+    @JsonProperty(value = "plan")
+    private Plans plan;
+
+    public Plans getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plans plan) {
+        this.plan = plan;
+    }
+
     public String getName() {
         return name;
     }
@@ -47,13 +59,14 @@ public class UserDTO {
         return birth_date;
     }
 
-    public UserDTO(String name, String surname, String email, String keyword, LocalDate birth_date, Roles role) {
+    public UserDTO(String name, String surname, String email, String keyword, LocalDate birth_date, Roles role, Plans plan) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.keyword = keyword;
         this.birth_date = birth_date;
         this.role = role;
+        this.plan = plan;
     }
 
     public void setName(String name) {

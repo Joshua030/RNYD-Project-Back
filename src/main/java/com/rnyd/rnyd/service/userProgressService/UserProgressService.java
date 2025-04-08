@@ -1,12 +1,12 @@
-package com.rnyd.rnyd.service.userProgress;
+package com.rnyd.rnyd.service.userProgressService;
 
 import com.rnyd.rnyd.dto.UserProgressRequest;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.model.UserProgressEntity;
 import com.rnyd.rnyd.repository.user.UserProgressRepository;
 import com.rnyd.rnyd.repository.user.UserRepository;
-import com.rnyd.rnyd.service.jwt.JwtService;
-import com.rnyd.rnyd.service.jwt.UserDetailsServiceImpl;
+import com.rnyd.rnyd.service.jwtService.JwtService;
+import com.rnyd.rnyd.service.jwtService.UserDetailsServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -58,6 +58,7 @@ public class UserProgressService {
             return "Nueva foto de progreso guardada.";
         }
     }
+
     public List<UserProgressEntity> getUserProgress(String userEmail) {
         Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
         return userOpt.map(userProgressRepository::findByUserOrderByProgressDateDesc).orElse(null);

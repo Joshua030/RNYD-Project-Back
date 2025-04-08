@@ -1,7 +1,7 @@
 package com.rnyd.rnyd.utils.security;
 
-import com.rnyd.rnyd.service.jwt.JwtService;
-import com.rnyd.rnyd.service.jwt.UserDetailsServiceImpl;
+import com.rnyd.rnyd.service.jwtService.JwtService;
+import com.rnyd.rnyd.service.jwtService.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

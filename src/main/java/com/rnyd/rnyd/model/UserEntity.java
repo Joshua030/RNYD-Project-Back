@@ -1,5 +1,6 @@
 package com.rnyd.rnyd.model;
 
+import com.rnyd.rnyd.utils.constants.Plans;
 import com.rnyd.rnyd.utils.constants.Roles;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -31,6 +32,11 @@ public class UserEntity {
     @Column(name = "role", nullable = false)
     private Roles role;
 
+    // TODO Ver si me asocia bien el ENUM a la variable
+    @Enumerated(EnumType.STRING)
+    @Column(name = "plan")
+    private Plans plan;
+
     public void setRole(Roles role) {
         this.role = role;
     }
@@ -59,18 +65,18 @@ public class UserEntity {
         this.id = id;
     }
 
-
-
     public UserEntity() {
     }
 
-    public UserEntity(String email, String name, String surname, LocalDate birth_date, String keyword, Roles role) {
+    public UserEntity(Long id, String email, String name, String surname, LocalDate birth_date, String keyword, Roles role, Plans plan) {
+        this.id = id;
         this.email = email;
         this.name = name;
         this.surname = surname;
         this.birth_date = birth_date;
         this.keyword = keyword;
         this.role = role;
+        this.plan = plan;
     }
 
     public Long getId() {
@@ -100,4 +106,13 @@ public class UserEntity {
     public Roles getRole() {
         return role;
     }
+
+    public Plans getPlan() {
+        return plan;
+    }
+
+    public void setPlan(Plans plan) {
+        this.plan = plan;
+    }
+
 }

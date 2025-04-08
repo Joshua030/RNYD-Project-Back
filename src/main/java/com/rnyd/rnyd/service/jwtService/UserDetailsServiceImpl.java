@@ -1,4 +1,4 @@
-package com.rnyd.rnyd.service.jwt;
+package com.rnyd.rnyd.service.jwtService;
 
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;

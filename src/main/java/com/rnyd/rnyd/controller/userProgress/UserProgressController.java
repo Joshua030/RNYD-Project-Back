@@ -2,7 +2,7 @@ package com.rnyd.rnyd.controller.userProgress;
 
 import com.rnyd.rnyd.dto.UserProgressRequest;
 import com.rnyd.rnyd.model.UserProgressEntity;
-import com.rnyd.rnyd.service.userProgress.UserProgressService;
+import com.rnyd.rnyd.service.userProgressService.UserProgressService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

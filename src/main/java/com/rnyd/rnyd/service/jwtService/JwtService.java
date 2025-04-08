@@ -1,13 +1,11 @@
-package com.rnyd.rnyd.service.jwt;
+package com.rnyd.rnyd.service.jwtService;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -47,12 +45,13 @@ public class JwtService {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SECRET_KEY_GEN)
-                .compact();
+    public String generateToken(String user, String role) {
+        return Jwts.builder() // Vamos a crear este objeto String con el patron Builder
+                .setSubject(user) // Seteamos la variable Subject (usuario) con nuestro usuario (email en este caso), debe ser String
+                .claim("role", role) // Creamos y seteamos el valor de la variable 'role' que sera propia del token
+                .setIssuedAt(new Date()) // Seteamos la fecha de creacion
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Seteamos el tiempo de expiracion
+                .signWith(SECRET_KEY_GEN, SignatureAlgorithm.HS256) // Firmamos con la llave generada y usamos el algoritmo HS256
+                .compact(); // Es igual que si pusieremos .build() en patron Builder
     }
 }
