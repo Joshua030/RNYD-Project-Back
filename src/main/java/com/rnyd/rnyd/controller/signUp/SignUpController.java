@@ -11,7 +11,7 @@ import java.util.List;
 @RequestMapping("/signup") // http://localhost:8080/sign-up
 public class SignUpController {
 
-    private SignUpService signUpService;
+    private final SignUpService signUpService;
 
     public SignUpController(SignUpService signUpService) {
         this.signUpService = signUpService;

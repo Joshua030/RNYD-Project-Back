@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/progress")
 public class UserProgressController {
 
-    private UserProgressService userProgressService;
+    private final UserProgressService userProgressService;
 
     public UserProgressController(UserProgressService userProgressService) {
         this.userProgressService = userProgressService;

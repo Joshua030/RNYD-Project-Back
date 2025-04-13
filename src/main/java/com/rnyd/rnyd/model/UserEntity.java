@@ -3,6 +3,7 @@ package com.rnyd.rnyd.model;
 import com.rnyd.rnyd.utils.constants.Plans;
 import com.rnyd.rnyd.utils.constants.Roles;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
@@ -37,33 +38,11 @@ public class UserEntity {
     @Column(name = "plan")
     private Plans plan;
 
-    public void setRole(Roles role) {
-        this.role = role;
-    }
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private WorkoutEntity workout;
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public void setBirth_date(LocalDate birth_date) {
-        this.birth_date = birth_date;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DietEntity diet;
 
     public UserEntity() {
     }
@@ -83,28 +62,56 @@ public class UserEntity {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getSurname() {
         return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public LocalDate getBirth_date() {
         return birth_date;
     }
 
+    public void setBirth_date(LocalDate birth_date) {
+        this.birth_date = birth_date;
+    }
+
     public String getKeyword() {
         return keyword;
     }
 
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
     public Roles getRole() {
         return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
     }
 
     public Plans getPlan() {
@@ -115,4 +122,11 @@ public class UserEntity {
         this.plan = plan;
     }
 
+    public WorkoutEntity getWorkout() {
+        return workout;
+    }
+
+    public void setWorkout(WorkoutEntity workout) {
+        this.workout = workout;
+    }
 }

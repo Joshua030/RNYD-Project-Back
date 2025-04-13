@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/stripe")
 public class StripeController {
 
-    private StripeService stripeService;
+    private final StripeService stripeService;
 
     StripeController(StripeService stripeService){
         this.stripeService = stripeService;

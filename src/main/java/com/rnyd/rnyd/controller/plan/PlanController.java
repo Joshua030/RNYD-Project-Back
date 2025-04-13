@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.rnyd.rnyd.utils.constants.Variables.USER_EMAIL_DOES_NOT_EXISTS;
+
 @RestController
 @RequestMapping("/plans")
 public class PlanController {
@@ -24,18 +26,19 @@ public class PlanController {
 
     @PatchMapping("/assign/{email}")
     public ResponseEntity<String> assignPlan(@PathVariable String email, @RequestBody PlanRequest plan){
-        return new ResponseEntity<>(planService.selectPlan(email, plan.getPlan()), HttpStatus.OK);
+        String response = planService.selectPlan(email, plan.getPlan()) ;
+        if(response != null){
+            return new ResponseEntity<>(planService.selectPlan(email, plan.getPlan()), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(USER_EMAIL_DOES_NOT_EXISTS, HttpStatus.NOT_FOUND);
     }
 
     @PatchMapping("/cancel/{email}")
     public ResponseEntity<String> cancelPlan(@PathVariable String email){
-        return new ResponseEntity<>(planService.cancelPlan(email), HttpStatus.OK);
+        String response = planService.cancelPlan(email) ;
+        if(response != null){
+            return new ResponseEntity<>("Plan cancelado.", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(USER_EMAIL_DOES_NOT_EXISTS, HttpStatus.NOT_FOUND);
     }
-
-    @PatchMapping("/change/{email}")
-    public ResponseEntity<String> changePlan(@PathVariable String email, @RequestBody PlanRequest plan){
-        return new ResponseEntity<>(planService.selectPlan(email, plan.getPlan()), HttpStatus.OK);
-    }
-
-
 }

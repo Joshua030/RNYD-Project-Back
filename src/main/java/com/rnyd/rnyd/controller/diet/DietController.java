@@ -1,0 +1,71 @@
+package com.rnyd.rnyd.controller.diet;
+
+
+import com.rnyd.rnyd.dto.DietDTO;
+import com.rnyd.rnyd.service.dietService.DietService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import static com.rnyd.rnyd.utils.constants.Variables.*;
+
+@RestController
+@RequestMapping("/diet")
+public class DietController {
+
+    private final DietService dietService;
+
+    public DietController(DietService dietService) {
+        this.dietService = dietService;
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> createDiet(@RequestBody DietDTO dietDTO){
+        DietDTO dietResponse = dietService.createDiet(dietDTO);
+
+        if(dietResponse != null){
+            return new ResponseEntity<>(DIET_CREATED, HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>(DIET_NOT_CREATED, HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping
+    public ResponseEntity<String> updateDiet(@RequestBody DietDTO dietDTO){
+        DietDTO dietResponse = dietService.updateDiet(dietDTO);
+
+        if(dietResponse != null){
+            return new ResponseEntity<>(DIET_UPDATED, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(DIET_NOT_UPDATED, HttpStatus.BAD_REQUEST);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteDiet(@PathVariable Long id){
+        DietDTO dietResponse = dietService.deleteDiet(id);
+
+        if(dietResponse != null){
+            return new ResponseEntity<>(DIET_DELETED, HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(DIET_NOT_DELETED, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/assign/{email}")
+    public ResponseEntity<String> assignDiet(@PathVariable String email, @RequestBody DietDTO dietDTO){
+        DietDTO dietResponse = dietService.assignDiet(email, dietDTO);
+
+        if(dietResponse != null){
+            return new ResponseEntity<>(DIET_ASSIGNED, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(DIET_NOT_ASSIGNED, HttpStatus.BAD_REQUEST);
+    }
+}

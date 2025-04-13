@@ -5,8 +5,6 @@ import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.model.UserProgressEntity;
 import com.rnyd.rnyd.repository.user.UserProgressRepository;
 import com.rnyd.rnyd.repository.user.UserRepository;
-import com.rnyd.rnyd.service.jwtService.JwtService;
-import com.rnyd.rnyd.service.jwtService.UserDetailsServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,20 +16,13 @@ import static com.rnyd.rnyd.utils.constants.Variables.USER_EMAIL_DOES_NOT_EXISTS
 @Service
 public class UserProgressService {
 
-    private UserProgressRepository userProgressRepository;
+    private final UserProgressRepository userProgressRepository;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    private UserDetailsServiceImpl userDetailsService;
-
-    private JwtService jwtService;
-
-    public UserProgressService(UserProgressRepository userProgressRepository, UserRepository userRepository,
-                               JwtService jwtService, UserDetailsServiceImpl userDetailsService) {
+    public UserProgressService(UserProgressRepository userProgressRepository, UserRepository userRepository) {
         this.userProgressRepository = userProgressRepository;
         this.userRepository = userRepository;
-        this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
     }
 
     public String saveProgress(String userEmail, UserProgressRequest request) {

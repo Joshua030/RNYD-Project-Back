@@ -15,7 +15,7 @@ Este repositorio contiene los endpoints principales para autenticación, registr
     ```json
     {
       "email": "usuario@example.com",
-      "password": "contraseña123"
+      "keyword": "contraseña123"
     }
     ```
 - **Respuestas:**
@@ -52,7 +52,6 @@ Este repositorio contiene los endpoints principales para autenticación, registr
     ```json
     {
       "email": "nuevo@example.com",
-      "password": "segura123",
       "name": "nombre",
       "surname": "apellido",
       "keyword" : "1234",
@@ -96,17 +95,81 @@ Este repositorio contiene los endpoints principales para autenticación, registr
   - `200 OK`: Lista de `UserProgressEntity`.
   - `404 NOT FOUND`: Si no hay registros.
 
+### 4. Pasarela de pago (StripeController)
+#### 🔹 Crear subscripción
+- **URL:** `/stripe/create-subscription`
+- **Método:** `POST`
+- **Descripción:** Crea una subscripción.
+- **Parámetros:**
+- `StripeDTO` (JSON body)
+    ```json
+    {
+      "name": "NUTRITION",
+      "description": "Nutrition plan .",
+      "price": 25,
+      "priceId": "9876542"
+    }
+    ```
+  - **Respuestas:**
+  - `201 CREATED`: True.
+  - `400 BAD REQUEST`: False.
+  
+#### 🔹 Crear subscripción
+- **URL:** `/stripe/subscribe`
+- **Método:** `POST`
+- **Descripción:** Solicitud de link de pago.
+- **Parámetros:**
+- `StripeDTO` (JSON body)
+    ```json
+    {
+      "priceId": "9876542"
+    }
+    ```
+  - **Respuestas:**
+  - `201 CREATED`: Enlace de pago.
+  - `400 BAD REQUEST`: Error al crear el enlace.
+
+### 5. Selección de plan (PlanController)
+#### 🔹 Asignar o cambiar un plan
+- **URL:** `/plans/assign/{email}`
+- **Método:** `PATCH`
+- **Descripción:** Asigna/Cambia una subscripción.
+- **Parámetros:**
+- `email` (path param)
+- `PlanRequest` (JSON body)
+    ```json
+    {
+      "plan" : "NUTRITION"
+    }
+    ```
+  - **Respuestas:**
+  - `200 OK`: El nuevo plan asignado es: %s.
+  - `404 NOT FOUND`: Este correo no existe.
+
+#### 🔹 Cancelar plan
+- **URL:** `/plans/cancel/{email}`
+- **Método:** `PATCH`
+- **Descripción:** Cancela una subscripción.
+- **Parámetros:**
+- `email` (path param)
+  - **Respuestas:**
+  - `200 OK`: Plan cancelado.
+  - `404 NOT FOUND`: Este correo no existe.
+
 # 📌 Tabla de Endpoints
 
 Esta tabla resume todos los endpoints disponibles en la API.
 
-| Módulo | Método | URL | Descripción | Parámetros | Respuestas |
-|--------|--------|-----|-------------|------------|------------|
-| **Autenticación** | `POST` | `/auth/signin` | Iniciar sesión y obtener un token JWT. | `UserDTO` (body) | `200 OK`: Token JWT<br>`401 UNAUTHORIZED`: Credenciales inválidas |
-| **Autenticación** | `POST` | `/auth/validate-token` | Validar si un token es válido o ha expirado. | `token` (query param) | `200 OK`: Token válido<br>`401 UNAUTHORIZED`: Token inválido o expirado |
-| **Registro de Usuarios** | `GET` | `/signup` | Obtener la lista de usuarios registrados. | Ninguno | `200 OK`: Lista de usuarios |
-| **Registro de Usuarios** | `POST` | `/signup/register` | Registrar un nuevo usuario. | `UserDTO` (body) | `200 OK`: Usuario registrado<br>`400 BAD REQUEST`: Error en el registro |
-| **Progreso del Usuario** | `POST` | `/progress/upload/{email}` | Subir progreso del usuario. | `email` (path param), `UserProgressRequest` (body) | `200 OK`: Progreso guardado |
-| **Progreso del Usuario** | `GET` | `/progress/history/{email}` | Obtener historial de progreso del usuario. | `email` (path param) | `200 OK`: Lista de progresos<br>`404 NOT FOUND`: No hay registros |
-
+| Módulo | Método  | URL                         | Descripción                                  | Parámetros                                         | Respuestas                                                                          |
+|--------|---------|-----------------------------|----------------------------------------------|----------------------------------------------------|-------------------------------------------------------------------------------------|
+| **Autenticación** | `POST`  | `/auth/signin`              | Iniciar sesión y obtener un token JWT.       | `UserDTO` (body)                                   | `200 OK`: Token JWT<br>`401 UNAUTHORIZED`: Credenciales inválidas                   |
+| **Autenticación** | `POST`  | `/auth/validate-token`      | Validar si un token es válido o ha expirado. | `token` (query param)                              | `200 OK`: Token válido<br>`401 UNAUTHORIZED`: Token inválido o expirado             |
+| **Registro de Usuarios** | `GET`   | `/signup`                   | Obtener la lista de usuarios registrados.    | Ninguno                                            | `200 OK`: Lista de usuarios                                                         |
+| **Registro de Usuarios** | `POST`  | `/signup/register`          | Registrar un nuevo usuario.                  | `UserDTO` (body)                                   | `200 OK`: Usuario registrado<br>`400 BAD REQUEST`: Error en el registro             |
+| **Progreso del Usuario** | `POST`  | `/progress/upload/{email}`  | Subir progreso del usuario.                  | `email` (path param), `UserProgressRequest` (body) | `200 OK`: Progreso guardado                                                         |
+| **Progreso del Usuario** | `GET`   | `/progress/history/{email}` | Obtener historial de progreso del usuario.   | `email` (path param)                               | `200 OK`: Lista de progresos<br>`404 NOT FOUND`: No hay registros                   |
+| **Pasarela de pago** | `POST`  | `/stripe/create-subscription` | Crea una subscripción.                       | `StripeDTO` (body)                                 | `201 CREATED`: True<br>`400 BAD REQUEST`: False                                     |
+| **Pasarela de pago** | `POST`  | `/stripe/subscribe`               | Solicitud de link de pago.                   | `StripeDTO` (body)                                 | `201 CREATED`: Enlace de pago<br>`400 BAD REQUEST`: Error al crear el enlace        |
+| **Selección de plan** | `PATCH` | `/plans/assign/{email}`                | Asigna/Cambia una subscripción.              | `PlanRequest` (body)                                 | `200 OK`: El nuevo plan asignado es: %s.<br>`404 NOT FOUND`: Este correo no existe. |
+| **Selección de plan** | `PATCH` | `/plans/cancel/{email}`                | Cancela una subscripción.                    | `PlanRequest` (body)                                 | `200 OK`: Plan cancelado.<br>`404 NOT FOUND`: Este correo no existe.                |
 

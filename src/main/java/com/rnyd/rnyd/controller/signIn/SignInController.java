@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class SignInController {
 
-    private SignInUseCase signInUseCase;
+    private final SignInUseCase signInUseCase;
 
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
     public SignInController(SignInUseCase signInUseCase, JwtService jwtService) {
         this.signInUseCase = signInUseCase;
