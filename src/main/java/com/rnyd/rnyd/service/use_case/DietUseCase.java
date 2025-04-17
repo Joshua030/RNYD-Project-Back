@@ -2,15 +2,19 @@ package com.rnyd.rnyd.service.use_case;
 
 import com.rnyd.rnyd.dto.DietDTO;
 
+import java.util.List;
+
 public interface DietUseCase {
 
-    public DietDTO getDietByUserEmail(String email);
+    List<DietDTO> getAllDiets();
 
-    public DietDTO updateDiet(DietDTO dietDTO);
+     DietDTO getDietById(Long id);
 
-    public DietDTO createDiet(DietDTO dietDTO);
+ String updateDiet(DietDTO dietDTO);
 
-    public DietDTO assignDiet(String email, DietDTO dietDTO);
+ String createDiet(DietDTO dietDTO);
 
-    public DietDTO deleteDiet(Long id);
+ String assignDiet(String email, DietDTO dietDTO);
+
+ String deleteDiet(Long id);
 }

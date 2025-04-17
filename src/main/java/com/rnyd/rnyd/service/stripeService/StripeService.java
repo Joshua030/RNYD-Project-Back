@@ -21,7 +21,7 @@ public class StripeService implements StripeUseCase {
     public Boolean createSubscription(StripeDTO stripeDTO) {
         // TODO ES DE EJEMPLO, CAMBIAR Y COMO FUNCIONA
         try {
-            Stripe.apiKey = API_KEY;
+            Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
 
             ProductCreateParams productCreateParams =
                     ProductCreateParams.builder()
@@ -54,7 +54,7 @@ public class StripeService implements StripeUseCase {
     @Override
     public PaymentLink createPaymentLink(StripeDTO stripeDTO) {
         try {
-            Stripe.apiKey = API_KEY;
+            Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
 
             PaymentLinkCreateParams paymentLinkCreateParams = PaymentLinkCreateParams.builder()
                     .addLineItem(LineItem.builder()

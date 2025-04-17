@@ -13,15 +13,47 @@ public class Variables {
      public final static String CURRENCY = "eur";
      // TODO ESTO NO FUNCIONA NI SIRVE, ELIMINAR Y HASHEAR
      public final static String API_KEY = "1234";
-     public final static String DIET_CREATED = "Diet was created successfuly.";
-     public final static String DIET_NOT_CREATED = "Error while creating Diet.";
-     public final static String DIET_UPDATED = "Diet was updated successfuly.";
-     public final static String DIET_NOT_UPDATED = "Error while updating Diet.";
-     public final static String DIET_DELETED = "Diet was deleted successfuly.";
-     public final static String DIET_NOT_DELETED = "Error while deleting Diet.";
-     public final static String DIET_ASSIGNED = "Diet was assigned successfuly.";
-     public final static String DIET_NOT_ASSIGNED = "Error while assgning Diet.";
 
+     // DIETS
+     public final static String DIET_CREATED = "Diet was created successfully.";
+     public final static String DIET_ALREADY_EXISTS = "Error while creating Diet.";
+     public final static String DIET_UPDATED = "Diet was updated successfully.";
+     public final static String DIET_NOT_UPDATED = "Error while updating Diet.";
+     public final static String DIET_DELETED = "Diet was deleted successfully.";
+     public final static String DIET_NOT_DELETED = "Error while deleting Diet.";
+     public final static String DIET_ASSIGNED = "Diet was assigned successfully.";
+     public final static String DIET_NOT_ASSIGNED = "Error while assigning Diet.";
+
+     // USERS
+     public final static String USER_DELETED = "User was deleted successfully.";
+     public final static String USER_UPDATED = "User was updated successfully.";
+
+     // USER PROGRESS
+     public final static String OVERWROTE_PROGRESS = "%s progress was overwritten successfully.";
+     public final static String PROGRESS_UPLOADED = "User progress was uploaded successfully.";
+
+
+     // WORKOUTS
+     public final static String WORKOUT_CREATED = "Workout was created successfully.";
+     public final static String WORKOUT_ALREADY_EXISTS = "Error while creating Workout.";
+     public final static String WORKOUT_UPDATED = "Workout was updated successfully.";
+     public final static String WORKOUT_NOT_UPDATED = "Error while updating Workout.";
+     public final static String WORKOUT_DELETED = "Workout was deleted successfully.";
+     public final static String WORKOUT_NOT_DELETED = "Error while deleting Workout.";
+     public final static String WORKOUT_ASSIGNED = "Workout was assigned successfully.";
+     public final static String WORKOUT_NOT_ASSIGNED = "Error while assigning Workout.";
+
+     // PLANS
+     public final static String PLAN_ASSIGNED = "The new assigned plan is: %s.";
+
+     // SIGN-IN
+     public final static String WRONG_LOGIN = "The email or password is incorrect.";
+     public final static String VALID_TOKEN = "The token is valid.";
+     public final static String INVALID_TOKEN = "The token is NOT valid.";
+
+     // STRIPE
+     public final static String SUBSCRIPTION_CREATED = "Subscription created successfully.";
+     public final static String SUBSCRIPTION_NOT_CREATED = "Subscription NOT created.";
 
 
 

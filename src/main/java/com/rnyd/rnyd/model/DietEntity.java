@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
 @Entity
 @Table(name = "user_diet")
 public class DietEntity {
@@ -13,13 +12,6 @@ public class DietEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diet_id")
     private Long dietId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
-
-    @Column(nullable = false, length = 255)
-    private String email;
 
     @Column(name = "diet_name", length = 100)
     private String dietName;
@@ -39,22 +31,6 @@ public class DietEntity {
 
     public void setDietId(Long dietId) {
         this.dietId = dietId;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getDietName() {

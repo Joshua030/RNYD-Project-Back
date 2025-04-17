@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import static com.rnyd.rnyd.utils.constants.Variables.SUBSCRIPTION_CREATED;
+import static com.rnyd.rnyd.utils.constants.Variables.SUBSCRIPTION_NOT_CREATED;
+
 @RequestMapping("/stripe")
 public class StripeController {
 
@@ -19,11 +22,11 @@ public class StripeController {
     }
 
     @PostMapping("/create-subscription")
-    public ResponseEntity<Boolean> createSubscription(@RequestBody StripeDTO stripeDTO){
+    public ResponseEntity<String> createSubscription(@RequestBody StripeDTO stripeDTO){
         if(stripeService.createSubscription(stripeDTO))
-            return new ResponseEntity<>(true, HttpStatus.CREATED);
+            return new ResponseEntity<>(SUBSCRIPTION_CREATED, HttpStatus.CREATED);
         else
-            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(SUBSCRIPTION_NOT_CREATED, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/subscribe")

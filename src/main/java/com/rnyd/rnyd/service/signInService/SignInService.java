@@ -43,4 +43,9 @@ public class SignInService implements SignInUseCase {
         }
         return null;
     }
+
+    @Override
+    public String registerSignIn(UserEntity userEntity) {
+        return jwtService.generateToken(userEntity.getEmail(), userEntity.getRole().name());
+    }
 }

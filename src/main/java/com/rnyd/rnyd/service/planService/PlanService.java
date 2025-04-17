@@ -6,6 +6,7 @@ import com.rnyd.rnyd.service.use_case.PlanSelectionUseCase;
 import com.rnyd.rnyd.utils.constants.Plans;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.rnyd.rnyd.utils.constants.Plans.getPlanByName;
@@ -28,12 +29,17 @@ public class PlanService implements PlanSelectionUseCase {
         entity.setPlan(getPlanByName(plan));
         userRepository.save(entity);
 
-        return String.format("El nuevo plan asignado es: %s.", plan);
+        return plan;
     }
 
     @Override
     public String cancelPlan(String email) {
         return selectPlan(email, Plans.NONE.name());
+    }
+
+    @Override
+    public List<Plans> getAllPlans() {
+        return List.of(Plans.values());
     }
 
     private UserEntity getUserByEmail(String email){

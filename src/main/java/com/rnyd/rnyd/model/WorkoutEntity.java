@@ -3,7 +3,6 @@ package com.rnyd.rnyd.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,13 +21,6 @@ public class WorkoutEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "workout_id")
     private Long workoutId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
-
-    @Column(nullable = false, length = 255)
-    private String email;
 
     @Column(name = "workout_name", length = 100)
     private String workoutName;
@@ -52,22 +44,6 @@ public class WorkoutEntity {
 
     public void setWorkoutId(Long workoutId) {
         this.workoutId = workoutId;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getWorkoutName() {

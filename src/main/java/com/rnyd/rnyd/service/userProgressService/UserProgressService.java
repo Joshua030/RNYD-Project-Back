@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.rnyd.rnyd.utils.constants.Variables.USER_EMAIL_DOES_NOT_EXISTS;
+import static com.rnyd.rnyd.utils.constants.Variables.*;
 
 @Service
 public class UserProgressService {
@@ -29,7 +29,7 @@ public class UserProgressService {
 
         Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
         if (userOpt.isEmpty()) {
-            return USER_EMAIL_DOES_NOT_EXISTS;
+            return null;
         }
 
         UserEntity user = userOpt.get();
@@ -42,11 +42,11 @@ public class UserProgressService {
             UserProgressEntity progressToUpdate = oldProgress.get();
             progressToUpdate.setImageUrl(request.getImageUrl());
             userProgressRepository.save(progressToUpdate);
-            return "Foto del mes " + month + " del año anterior sobrescrita.";
+            return String.format(OVERWROTE_PROGRESS, currentDate.getMonth().name());
         } else {
             UserProgressEntity newProgress = new UserProgressEntity(user, request.getImageUrl(), request.getWeight(), request.getHeight(), currentDate);
             userProgressRepository.save(newProgress);
-            return "Nueva foto de progreso guardada.";
+            return PROGRESS_UPLOADED;
         }
     }
 

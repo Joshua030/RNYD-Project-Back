@@ -23,10 +23,10 @@ public class SignUpController {
     }
 
     @PostMapping("/register") // http://localhost:8080/signup/register POST
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO request){
-        UserDTO userDTO = signUpService.register(request);
-        if(userDTO != null)
-            return ResponseEntity.ok(userDTO);
+    public ResponseEntity<String> register(@RequestBody UserDTO request){
+        String token = signUpService.register(request);
+        if(token != null)
+            return ResponseEntity.ok(token);
         else
             return ResponseEntity.badRequest().body(null);
     }

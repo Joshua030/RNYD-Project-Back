@@ -8,5 +8,5 @@ import java.util.List;
 public interface SignUpUseCase {
     List<UserDTO> getRegisteredUsers();
 
-    UserDTO register(UserDTO userSignUpRequest);
+    String register(UserDTO userSignUpRequest);
 }

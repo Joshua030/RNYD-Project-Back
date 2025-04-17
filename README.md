@@ -156,6 +156,244 @@ Este repositorio contiene los endpoints principales para autenticación, registr
   - `200 OK`: Plan cancelado.
   - `404 NOT FOUND`: Este correo no existe.
 
+### 6. Gestión de Usuarios (UserController)
+
+Este módulo contiene los endpoints para consultar, modificar, eliminar y verificar usuarios registrados en el sistema.
+
+---
+
+#### 🔹 Obtener Todos los Usuarios
+
+- **URL:** `/user`
+- **Método:** `GET`
+- **Descripción:** Retorna una lista con todos los usuarios registrados.
+- **Parámetros:** Ninguno
+- **Respuestas:**
+  - `200 OK`: Lista de `UserDTO`.
+
+---
+
+#### 🔹 Obtener Usuario por Email
+
+- **URL:** `/user/{email}`
+- **Método:** `GET`
+- **Descripción:** Retorna la información de un usuario según su email.
+- **Parámetros:**
+  - `email` (path param)
+- **Respuestas:**
+  - `200 OK`: Objeto `UserDTO`.
+  - `404 NOT FOUND`: Usuario no encontrado.
+
+---
+
+#### 🔹 Modificar Usuario
+
+- **URL:** `/user`
+- **Método:** `PATCH`
+- **Descripción:** Modifica los datos de un usuario existente.
+- **Parámetros:**
+  - `UserDTO` (JSON body)
+    ```json
+    {
+      "email": "usuario@example.com",
+      "name": "NuevoNombre",
+      "surname": "NuevoApellido",
+      "keyword": "nuevaClave",
+      "birth_date": "2025-04-01",
+      "role": "USER"
+    }
+    ```
+- **Respuestas:**
+  - `200 OK`: Mensaje de modificación exitosa.
+  - `404 NOT FOUND`: Usuario no encontrado.
+
+---
+
+#### 🔹 Eliminar Usuario
+
+- **URL:** `/user/{email}`
+- **Método:** `DELETE`
+- **Descripción:** Elimina un usuario según su email.
+- **Parámetros:**
+  - `email` (path param)
+- **Respuestas:**
+  - `200 OK`: Mensaje de eliminación exitosa.
+  - `404 NOT FOUND`: Usuario no encontrado.
+
+---
+
+#### 🔹 Verificar Rol de Administrador
+
+- **URL:** `/user/check-admin/{email}`
+- **Método:** `GET`
+- **Descripción:** Verifica si un usuario tiene el rol de administrador.
+- **Parámetros:**
+  - `email` (path param)
+- **Respuestas:**
+  - `200 OK`: `true` si es administrador, `false` si no lo es.
+
+### 7. Gestión de Dietas (DietController)
+
+Este módulo contiene los endpoints para crear, actualizar, eliminar y asignar dietas a usuarios.
+
+---
+
+#### 🔹 Crear Dieta
+
+- **URL:** `/diet/create`
+- **Método:** `POST`
+- **Descripción:** Crea una nueva dieta.
+- **Parámetros:**
+  - `DietDTO` (JSON body)
+    ```json
+    {
+      "id": 1,
+      "type": "LOW_CARB",
+      "description": "Dieta baja en carbohidratos",
+      "createdDate": "2025-04-01"
+    }
+    ```
+- **Respuestas:**
+  - `201 CREATED`: Dieta creada exitosamente.
+  - `400 BAD REQUEST`: No se pudo crear la dieta.
+
+---
+
+#### 🔹 Actualizar Dieta
+
+- **URL:** `/diet`
+- **Método:** `PATCH`
+- **Descripción:** Actualiza la información de una dieta existente.
+- **Parámetros:**
+  - `DietDTO` (JSON body)
+    ```json
+    {
+      "id": 1,
+      "type": "KETO",
+      "description": "Actualización a dieta keto",
+      "createdDate": "2025-04-01"
+    }
+    ```
+- **Respuestas:**
+  - `200 OK`: Dieta actualizada exitosamente.
+  - `400 BAD REQUEST`: No se pudo actualizar la dieta.
+
+---
+
+####🔹 Eliminar Dieta
+
+- **URL:** `/diet/{id}`
+- **Método:** `DELETE`
+- **Descripción:** Elimina una dieta específica según su ID.
+- **Parámetros:**
+  - `id` (path param)
+- **Respuestas:**
+  - `204 NO CONTENT`: Dieta eliminada exitosamente.
+  - `400 BAD REQUEST`: No se pudo eliminar la dieta.
+
+---
+
+#### 🔹 Asignar Dieta a Usuario
+
+- **URL:** `/diet/assign/{email}`
+- **Método:** `POST`
+- **Descripción:** Asigna una dieta a un usuario según su email.
+- **Parámetros:**
+  - `email` (path param)
+  - `DietDTO` (JSON body)
+    ```json
+    {
+      "id": 2,
+      "type": "VEGAN",
+      "description": "Dieta vegana personalizada",
+      "createdDate": "2025-04-01"
+    }
+    ```
+- **Respuestas:**
+  - `200 OK`: Dieta asignada exitosamente.
+  - `400 BAD REQUEST`: No se pudo asignar la dieta.
+
+### 8.️ Gestión de Rutinas de Ejercicio (WorkOutController)
+
+Este módulo contiene los endpoints para crear, actualizar, eliminar y asignar rutinas de ejercicio a los usuarios.
+
+---
+
+#### 🔹 Crear Rutina de Ejercicio
+
+- **URL:** `/workout/create`
+- **Método:** `POST`
+- **Descripción:** Crea una nueva rutina de ejercicio.
+- **Parámetros:**
+  - `WorkOutDTO` (JSON body)
+    ```json
+    {
+      "id": 1,
+      "name": "Full Body",
+      "description": "Rutina completa para todo el cuerpo",
+      "createdDate": "2025-04-01"
+    }
+    ```
+- **Respuestas:**
+  - `201 CREATED`: Rutina creada exitosamente.
+  - `400 BAD REQUEST`: No se pudo crear la rutina.
+
+---
+
+#### 🔹 Actualizar Rutina de Ejercicio
+
+- **URL:** `/workout`
+- **Método:** `PATCH`
+- **Descripción:** Actualiza la información de una rutina de ejercicio existente.
+- **Parámetros:**
+  - `WorkOutDTO` (JSON body)
+    ```json
+    {
+      "id": 1,
+      "name": "Full Body Avanzado",
+      "description": "Versión avanzada del entrenamiento full body",
+      "createdDate": "2025-04-01"
+    }
+    ```
+- **Respuestas:**
+  - `200 OK`: Rutina actualizada exitosamente.
+  - `400 BAD REQUEST`: No se pudo actualizar la rutina.
+
+---
+
+#### 🔹 Eliminar Rutina de Ejercicio
+
+- **URL:** `/workout/{id}`
+- **Método:** `DELETE`
+- **Descripción:** Elimina una rutina de ejercicio específica según su ID.
+- **Parámetros:**
+  - `id` (path param)
+- **Respuestas:**
+  - `204 NO CONTENT`: Rutina eliminada exitosamente.
+  - `400 BAD REQUEST`: No se pudo eliminar la rutina.
+
+---
+
+#### 🔹 Asignar Rutina a Usuario
+
+- **URL:** `/workout/assign/{email}`
+- **Método:** `POST`
+- **Descripción:** Asigna una rutina de ejercicio a un usuario según su email.
+- **Parámetros:**
+  - `email` (path param)
+  - `WorkOutDTO` (JSON body)
+    ```json
+    {
+      "id": 2,
+      "name": "Piernas y Glúteos",
+      "description": "Entrenamiento específico para parte inferior",
+      "createdDate": "2025-04-01"
+    }
+    ```
+- **Respuestas:**
+  - `200 OK`: Rutina asignada exitosamente.
+  - `400 BAD REQUEST`: No se pudo asignar la rutina.
+
 # 📌 Tabla de Endpoints
 
 Esta tabla resume todos los endpoints disponibles en la API.
@@ -172,4 +410,11 @@ Esta tabla resume todos los endpoints disponibles en la API.
 | **Pasarela de pago** | `POST`  | `/stripe/subscribe`               | Solicitud de link de pago.                   | `StripeDTO` (body)                                 | `201 CREATED`: Enlace de pago<br>`400 BAD REQUEST`: Error al crear el enlace        |
 | **Selección de plan** | `PATCH` | `/plans/assign/{email}`                | Asigna/Cambia una subscripción.              | `PlanRequest` (body)                                 | `200 OK`: El nuevo plan asignado es: %s.<br>`404 NOT FOUND`: Este correo no existe. |
 | **Selección de plan** | `PATCH` | `/plans/cancel/{email}`                | Cancela una subscripción.                    | `PlanRequest` (body)                                 | `200 OK`: Plan cancelado.<br>`404 NOT FOUND`: Este correo no existe.                |
-
+| **Gestión de Dietas**| `POST`  | `/diet/create`                | Crea una nueva dieta.                               | `DietDTO` (body)                                       | `201 CREATED`: Dieta creada<br>`400 BAD REQUEST`: No se pudo crear la dieta          |
+| **Gestión de Dietas**| `PATCH` | `/diet`                       | Actualiza una dieta existente.                      | `DietDTO` (body)                                       | `200 OK`: Dieta actualizada<br>`400 BAD REQUEST`: No se pudo actualizar              |
+| **Gestión de Dietas**| `DELETE`| `/diet/{id}`                  | Elimina una dieta por ID.                           | `id` (path param)                                      | `204 NO CONTENT`: Dieta eliminada<br>`400 BAD REQUEST`: No se pudo eliminar          |
+| **Gestión de Dietas**| `POST`  | `/diet/assign/{email}`        | Asigna una dieta a un usuario por email.            | `email` (path param), `DietDTO` (body)                 | `200 OK`: Dieta asignada<br>`400 BAD REQUEST`: No se pudo asignar la dieta           |
+| **Gestión de Rutinas**| `POST` | `/workout/create`             | Crea una nueva rutina de ejercicio.                 | `WorkOutDTO` (body)                                    | `201 CREATED`: Rutina creada<br>`400 BAD REQUEST`: No se pudo crear la rutina        |
+| **Gestión de Rutinas**| `PATCH`| `/workout`                    | Actualiza una rutina de ejercicio.                  | `WorkOutDTO` (body)                                    | `200 OK`: Rutina actualizada<br>`400 BAD REQUEST`: No se pudo actualizar             |
+| **Gestión de Rutinas**| `DELETE`| `/workout/{id}`              | Elimina una rutina por ID.                          | `id` (path param)                                      | `204 NO CONTENT`: Rutina eliminada<br>`400 BAD REQUEST`: No se pudo eliminar         |
+| **Gestión de Rutinas**| `POST` | `/workout/assign/{email}`     | Asigna una rutina a un usuario por email.           | `email` (path param), `WorkOutDTO` (body)              | `200 OK`: Rutina asignada<br>`400 BAD REQUEST`: No se pudo asignar la rutina         |
