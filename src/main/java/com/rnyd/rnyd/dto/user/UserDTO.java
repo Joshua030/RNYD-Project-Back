@@ -133,4 +133,12 @@ public class UserDTO {
     public void setRole(Roles role) {
         this.role = role;
     }
+
+    public UserMeasurementDTO getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurements(UserMeasurementDTO measurements) {
+        this.measurements = measurements;
+    }
 }
