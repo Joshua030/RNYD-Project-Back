@@ -1,4 +1,4 @@
-package com.rnyd.rnyd.dto;
+package com.rnyd.rnyd.dto.workout;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

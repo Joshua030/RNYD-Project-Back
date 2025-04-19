@@ -1,7 +1,7 @@
 package com.rnyd.rnyd.service.workOutService;
 
+import com.rnyd.rnyd.dto.workout.WorkOutDTO;
 import com.rnyd.rnyd.mapper.workOut.WorkOutMapper;
-import com.rnyd.rnyd.model.DietEntity;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.model.WorkoutEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;
@@ -30,24 +30,44 @@ public class WorkOutService implements WorkOutUseCase {
         this.userRepository = userRepository;
     }
 
-    public Void getDietByUserEmail(){
-        return null;
+    public String updateWorkout(WorkOutDTO workOutDTO){
+        if(getWorkOutById(workOutDTO.getWorkoutId()) == null)
+            return null;
+
+        workOutRepository.save(workOutMapper.toEntity(workOutDTO));
+
+        return WORKOUT_UPDATED;
     }
 
-    public Void updateDiet(){
-        return null;
+    public String createWorkout(WorkOutDTO workOutDTO){
+        workOutRepository.save(workOutMapper.toEntity(workOutDTO));
+
+        return WORKOUT_CREATED;
     }
 
-    public Void createDiet(){
-        return null;
+    public String assignWorkout(String email, WorkOutDTO workOutDTO){
+        if(getWorkOutById(workOutDTO.getWorkoutId()) == null)
+            return null;
+
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+
+        if(userEntityOptional.isEmpty())
+            return null;
+
+        UserEntity user = userEntityOptional.get();
+        user.setWorkout(workOutMapper.toEntity(workOutDTO));
+        userRepository.save(user);
+
+        return WORKOUT_ASSIGNED;
     }
 
-    public Void assignDiet(){
-        return null;
-    }
+    public String deleteWorkout(Long id){
+        if(getWorkOutById(id) == null)
+            return null;
 
-    public Void deleteDiet(){
-        return null;
+        workOutRepository.deleteById(id);
+
+        return WORKOUT_DELETED;
     }
 
     public WorkOutDTO getWorkOutById(Long id){

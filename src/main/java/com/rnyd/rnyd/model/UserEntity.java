@@ -5,6 +5,8 @@ import com.rnyd.rnyd.utils.constants.Roles;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "\"user\"")
@@ -33,16 +35,31 @@ public class UserEntity {
     @Column(name = "role", nullable = false)
     private Roles role;
 
-    // TODO Ver si me asocia bien el ENUM a la variable
     @Enumerated(EnumType.STRING)
     @Column(name = "plan")
     private Plans plan;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(optional = true)
+    @JoinColumn(name = "workout_id", referencedColumnName = "workout_id")
     private WorkoutEntity workout;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(optional = true)
+    @JoinColumn(name = "diet_id", referencedColumnName = "diet_id")
     private DietEntity diet;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserProgressEntity> progressList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserMeasurementEntity> measurements;
+
+    public List<UserMeasurementEntity> getMeasurements() {
+        return measurements;
+    }
+
+    public void setMeasurements(List<UserMeasurementEntity> measurements) {
+        this.measurements = measurements;
+    }
 
     public UserEntity() {
     }
@@ -60,6 +77,14 @@ public class UserEntity {
 
     public Long getId() {
         return id;
+    }
+
+    public List<UserProgressEntity> getProgressList() {
+        return progressList;
+    }
+
+    public void setProgressList(List<UserProgressEntity> progressList) {
+        this.progressList = progressList;
     }
 
     public void setId(Long id) {
@@ -128,5 +153,13 @@ public class UserEntity {
 
     public void setWorkout(WorkoutEntity workout) {
         this.workout = workout;
+    }
+
+    public DietEntity getDiet() {
+        return diet;
+    }
+
+    public void setDiet(DietEntity diet) {
+        this.diet = diet;
     }
 }

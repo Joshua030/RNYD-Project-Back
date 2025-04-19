@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.controller.signIn;
 
-import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.user.UserDTO;
 import com.rnyd.rnyd.service.jwtService.JwtService;
 import com.rnyd.rnyd.service.use_case.SignInUseCase;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class SignInController {
 
     // Hablar con front por si quiere ser por header o param
     @PostMapping("/validate-token")
-    public ResponseEntity<String> validateToken(@RequestParam String token) {
+    public ResponseEntity<String> validateToken(@RequestBody String token) {
         if (jwtService.isTokenExpired(token)) {
             return ResponseEntity.status(401).body(INVALID_TOKEN);
         } else

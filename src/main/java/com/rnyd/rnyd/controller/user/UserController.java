@@ -1,8 +1,7 @@
 package com.rnyd.rnyd.controller.user;
 
-import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.user.UserDTO;
 import com.rnyd.rnyd.service.userService.UserService;
-import lombok.experimental.PackagePrivate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

@@ -1,10 +1,11 @@
-package com.rnyd.rnyd.dto;
+package com.rnyd.rnyd.dto.diet;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class DietDTO {
 
@@ -24,6 +25,41 @@ public class DietDTO {
     @JsonProperty("created_at")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @JsonProperty("days")
+    private List<DietDayDTO> days;
+
+    @JsonProperty("preferences")
+    private String preferences;
+
+    @JsonProperty("allergies")
+    private String allergies;
+
+    public String getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(String preferences) {
+        this.preferences = preferences;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+    }
+
+    public List<DietDayDTO> getDays() {
+        return days;
+    }
+
+    public void setDays(List<DietDayDTO> days) {
+        this.days = days;
+    }
+
+
 
     // Getters and Setters
     public Long getDietId() {

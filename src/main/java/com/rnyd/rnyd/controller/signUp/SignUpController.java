@@ -1,11 +1,13 @@
 package com.rnyd.rnyd.controller.signUp;
 
-import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.user.UserDTO;
 import com.rnyd.rnyd.service.signUpService.SignUpService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.rnyd.rnyd.utils.constants.Variables.USER_EMAIL_ALREADY_EXISTS;
 
 @RestController
 @RequestMapping("/signup") // http://localhost:8080/sign-up
@@ -28,7 +30,7 @@ public class SignUpController {
         if(token != null)
             return ResponseEntity.ok(token);
         else
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(USER_EMAIL_ALREADY_EXISTS);
     }
 
 }

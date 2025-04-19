@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.controller.plan;
 
-import com.rnyd.rnyd.dto.PlanRequest;
+import com.rnyd.rnyd.dto.plan.PlanRequest;
 import com.rnyd.rnyd.service.planService.PlanService;
 
 import com.rnyd.rnyd.utils.constants.Plans;

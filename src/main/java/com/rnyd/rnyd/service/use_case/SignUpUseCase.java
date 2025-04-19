@@ -1,7 +1,6 @@
 package com.rnyd.rnyd.service.use_case;
 
-import com.rnyd.rnyd.dto.UserDTO;
-import org.springframework.http.ResponseEntity;
+import com.rnyd.rnyd.dto.user.UserDTO;
 
 import java.util.List;
 

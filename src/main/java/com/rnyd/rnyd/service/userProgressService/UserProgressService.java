@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.service.userProgressService;
 
-import com.rnyd.rnyd.dto.UserProgressRequest;
+import com.rnyd.rnyd.dto.user.UserProgressDTO;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.model.UserProgressEntity;
 import com.rnyd.rnyd.repository.user.UserProgressRepository;
@@ -25,7 +25,7 @@ public class UserProgressService {
         this.userRepository = userRepository;
     }
 
-    public String saveProgress(String userEmail, UserProgressRequest request) {
+    public String saveProgress(String userEmail, UserProgressDTO request) {
 
         Optional<UserEntity> userOpt = userRepository.findByEmail(userEmail);
         if (userOpt.isEmpty()) {

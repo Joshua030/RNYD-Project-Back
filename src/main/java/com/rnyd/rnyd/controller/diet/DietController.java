@@ -1,7 +1,7 @@
 package com.rnyd.rnyd.controller.diet;
 
-
-import com.rnyd.rnyd.dto.DietDTO;
+import com.rnyd.rnyd.dto.diet.DietDTO;
+import com.rnyd.rnyd.dto.diet.PreferencesAndAllergiesDTO;
 import com.rnyd.rnyd.service.dietService.DietService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,11 +80,11 @@ public class DietController {
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DietDTO> getAllDiets(@PathVariable Long id){
+    public ResponseEntity<DietDTO> getDietById(@PathVariable Long id){
         DietDTO dietResponse = dietService.getDietById(id);
 
         if(dietResponse != null){
@@ -94,4 +94,13 @@ public class DietController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/preferences/{email}")
+    public ResponseEntity<PreferencesAndAllergiesDTO> getPreferencesAndAllergies(@PathVariable String email){
+        PreferencesAndAllergiesDTO preferencesAndAllergiesDTO = dietService.getPreferencesAndAllergies(email);
+
+        if(preferencesAndAllergiesDTO != null)
+            return new ResponseEntity<>(preferencesAndAllergiesDTO, HttpStatus.OK);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

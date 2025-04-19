@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.mapper.workOut;
 
-import com.rnyd.rnyd.dto.WorkOutDTO;
+import com.rnyd.rnyd.dto.workout.WorkOutDTO;
 import com.rnyd.rnyd.model.WorkoutEntity;
 import org.mapstruct.Mapper;
 

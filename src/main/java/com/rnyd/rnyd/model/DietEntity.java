@@ -3,9 +3,10 @@ package com.rnyd.rnyd.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "user_diet")
+@Table(name = "user_diets")
 public class DietEntity {
 
     @Id
@@ -22,8 +23,41 @@ public class DietEntity {
     @Column(columnDefinition = "TEXT")
     private String note;
 
+    public String getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(String preferences) {
+        this.preferences = preferences;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+    }
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "preferences", columnDefinition = "TEXT")
+    private String preferences;
+
+    @Column(name = "allergies", columnDefinition = "TEXT")
+    private String allergies;
+
+    @OneToMany(mappedBy = "userDiet", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DietDayEntity> days;
+
+    public List<DietDayEntity> getDays() {
+        return days;
+    }
+
+    public void setDays(List<DietDayEntity> days) {
+        this.days = days;
+    }
 
     public Long getDietId() {
         return dietId;

@@ -1,7 +1,7 @@
 package com.rnyd.rnyd.service.signUpService;
 
 import com.rnyd.rnyd.mapper.user.UserMapper;
-import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.user.UserDTO;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.signInService.SignInService;

@@ -1,10 +1,15 @@
 package com.rnyd.rnyd.service.use_case;
 
-import com.rnyd.rnyd.dto.StripeDTO;
+import com.rnyd.rnyd.dto.stripe.StripeDTO;
+import com.rnyd.rnyd.dto.stripe.SubscriptionDTO;
 import com.stripe.model.PaymentLink;
 
+import java.util.List;
+
 public interface StripeUseCase {
-    Boolean createSubscription(StripeDTO  stripeDTO);
+    String createSubscription(StripeDTO  stripeDTO);
 
     PaymentLink createPaymentLink(StripeDTO stripeDTO);
+
+    List<SubscriptionDTO> getAllSubscriptions();
 }

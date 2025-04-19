@@ -1,4 +1,4 @@
-package com.rnyd.rnyd.dto;
+package com.rnyd.rnyd.dto.stripe;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.service.userService;
 
-import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.user.UserDTO;
 import com.rnyd.rnyd.mapper.user.UserMapper;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;
@@ -19,6 +19,7 @@ public class UserService implements UserUseCase {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+
 
     public UserService(UserMapper userMapper, UserRepository userRepository) {
         this.userMapper = userMapper;

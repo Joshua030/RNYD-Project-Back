@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.controller.userProgress;
 
-import com.rnyd.rnyd.dto.UserProgressRequest;
+import com.rnyd.rnyd.dto.user.UserProgressDTO;
 import com.rnyd.rnyd.model.UserProgressEntity;
 import com.rnyd.rnyd.service.userProgressService.UserProgressService;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class UserProgressController {
     }
 
     @PostMapping("/upload/{email}")
-    public ResponseEntity<String> uploadProgress(@PathVariable String email, @RequestBody UserProgressRequest request) {
+    public ResponseEntity<String> uploadProgress(@PathVariable String email, @RequestBody UserProgressDTO request) {
         String response = userProgressService.saveProgress(email, request);
 
         if(response != null)

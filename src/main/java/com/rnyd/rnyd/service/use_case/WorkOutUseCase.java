@@ -1,6 +1,6 @@
 package com.rnyd.rnyd.service.use_case;
 
-import com.rnyd.rnyd.dto.WorkOutDTO;
+import com.rnyd.rnyd.dto.workout.WorkOutDTO;
 
 import java.util.List;
 

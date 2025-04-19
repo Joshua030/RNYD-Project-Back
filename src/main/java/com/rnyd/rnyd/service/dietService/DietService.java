@@ -1,15 +1,18 @@
 package com.rnyd.rnyd.service.dietService;
 
-import com.rnyd.rnyd.dto.DietDTO;
-import com.rnyd.rnyd.dto.UserDTO;
+import com.rnyd.rnyd.dto.diet.DietDTO;
+import com.rnyd.rnyd.dto.diet.PreferencesAndAllergiesDTO;
 import com.rnyd.rnyd.mapper.diet.DietMapper;
+import com.rnyd.rnyd.model.DietDayEntity;
 import com.rnyd.rnyd.model.DietEntity;
+import com.rnyd.rnyd.model.DietMealEntity;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.diet.DietRepository;
 import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.DietUseCase;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,11 +55,23 @@ public class DietService implements DietUseCase {
         return DIET_UPDATED;
     }
 
-    public String createDiet(DietDTO dietDTO){
-        if(getDietById(dietDTO.getDietId()) != null)
-            return null;
+    public String createDiet(DietDTO dietDTO) {
+        DietEntity dietEntity = dietMapper.toEntity(dietDTO);
 
-        dietRepository.save(dietMapper.toEntity(dietDTO));
+        dietEntity.setCreatedAt(LocalDateTime.now());
+
+        if (dietEntity.getDays() != null) {
+            for (DietDayEntity day : dietEntity.getDays()) {
+                day.setUserDiet(dietEntity);
+                if (day.getMeals() != null) {
+                    for (DietMealEntity meal : day.getMeals()) {
+                        meal.setDietDay(day);
+                    }
+                }
+            }
+        }
+
+        dietRepository.save(dietEntity);
 
         return DIET_CREATED;
     }
@@ -84,6 +99,21 @@ public class DietService implements DietUseCase {
         dietRepository.deleteById(id);
 
         return DIET_DELETED;
+    }
+
+    @Override
+    public PreferencesAndAllergiesDTO getPreferencesAndAllergies(String email) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+
+        if(userEntityOptional.isEmpty())
+            return null;
+
+        DietEntity diet = userEntityOptional.get().getDiet();
+
+        if(diet == null)
+            return null;
+
+        return new PreferencesAndAllergiesDTO(diet.getPreferences(), diet.getAllergies());
     }
 }
 

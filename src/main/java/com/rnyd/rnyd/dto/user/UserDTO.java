@@ -1,12 +1,13 @@
-package com.rnyd.rnyd.dto;
+package com.rnyd.rnyd.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.rnyd.rnyd.dto.workout.WorkOutDTO;
+import com.rnyd.rnyd.dto.diet.DietDTO;
 import com.rnyd.rnyd.utils.constants.Plans;
 import com.rnyd.rnyd.utils.constants.Roles;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
+import java.util.List;
 
 public class UserDTO {
 
@@ -31,12 +32,48 @@ public class UserDTO {
     @JsonProperty(value = "plan")
     private Plans plan;
 
+    @JsonProperty("userProgress")
+    private List<UserProgressDTO> progressList;
+
+    @JsonProperty(value = "diet")
+    private DietDTO diet;
+
+    @JsonProperty(value = "workout")
+    private WorkOutDTO workout;
+
+    @JsonProperty(value = "measurements")
+    private UserMeasurementDTO measurements;
+
     public Plans getPlan() {
         return plan;
     }
 
     public void setPlan(Plans plan) {
         this.plan = plan;
+    }
+
+    public List<UserProgressDTO> getProgressList() {
+        return progressList;
+    }
+
+    public void setProgressList(List<UserProgressDTO> progressList) {
+        this.progressList = progressList;
+    }
+
+    public DietDTO getDiet() {
+        return diet;
+    }
+
+    public void setDiet(DietDTO diet) {
+        this.diet = diet;
+    }
+
+    public WorkOutDTO getWorkout() {
+        return workout;
+    }
+
+    public void setWorkout(WorkOutDTO workout) {
+        this.workout = workout;
     }
 
     public String getName() {

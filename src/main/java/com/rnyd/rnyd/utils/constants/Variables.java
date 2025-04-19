@@ -7,12 +7,10 @@ import javax.crypto.SecretKey;
 public class Variables {
      public final static SecretKey SECRET_KEY_GEN = Keys.secretKeyFor(SignatureAlgorithm.HS256);
      public final static long EXPIRATION_TIME = 86400000; // 1 dia en milisegundos
-     public final  static String
-     USER_EMAIL_ALREADY_EXISTS = "Este correo ya está en uso.";
-     public final static String USER_EMAIL_DOES_NOT_EXISTS = "Este correo no existe.";
+     public final static String USER_EMAIL_DOES_NOT_EXISTS = "This email does not exist.";
+     public final static String USER_EMAIL_ALREADY_EXISTS = "This email already exists, try logging in.";
+
      public final static String CURRENCY = "eur";
-     // TODO ESTO NO FUNCIONA NI SIRVE, ELIMINAR Y HASHEAR
-     public final static String API_KEY = "1234";
 
      // DIETS
      public final static String DIET_CREATED = "Diet was created successfully.";
@@ -23,6 +21,7 @@ public class Variables {
      public final static String DIET_NOT_DELETED = "Error while deleting Diet.";
      public final static String DIET_ASSIGNED = "Diet was assigned successfully.";
      public final static String DIET_NOT_ASSIGNED = "Error while assigning Diet.";
+     public final static String DIET_NOT_FOUND = "Diet was not found.";
 
      // USERS
      public final static String USER_DELETED = "User was deleted successfully.";
@@ -52,7 +51,7 @@ public class Variables {
      public final static String INVALID_TOKEN = "The token is NOT valid.";
 
      // STRIPE
-     public final static String SUBSCRIPTION_CREATED = "Subscription created successfully.";
+     public final static String SUBSCRIPTION_CREATED = "Subscription created successfully with Id: %s";
      public final static String SUBSCRIPTION_NOT_CREATED = "Subscription NOT created.";
 
 

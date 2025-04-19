@@ -1,4 +1,4 @@
-package com.rnyd.rnyd.dto;
+package com.rnyd.rnyd.dto.plan;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
