@@ -1,8 +1,8 @@
 # Para correr la app en local
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tuusuario/tu-repo.git
-cd tu-repo
+git clone https://github.com/Jorexbp/RNYD.git
+cd RNYD
 
 # Compilar y descargar dependencias
 mvn clean install
