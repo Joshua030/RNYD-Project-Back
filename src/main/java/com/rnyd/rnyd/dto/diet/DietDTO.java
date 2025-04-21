@@ -26,9 +26,6 @@ public class DietDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
-    @JsonProperty("days")
-    private List<DietDayDTO> days;
-
     @JsonProperty("preferences")
     private String preferences;
 
@@ -50,16 +47,6 @@ public class DietDTO {
     public void setAllergies(String allergies) {
         this.allergies = allergies;
     }
-
-    public List<DietDayDTO> getDays() {
-        return days;
-    }
-
-    public void setDays(List<DietDayDTO> days) {
-        this.days = days;
-    }
-
-
 
     // Getters and Setters
     public Long getDietId() {

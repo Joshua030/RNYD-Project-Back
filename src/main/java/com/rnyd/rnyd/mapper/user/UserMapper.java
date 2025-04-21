@@ -11,18 +11,21 @@ import org.mapstruct.Mappings;
 
 @Mapper(
         componentModel = "spring",
-        uses = {WorkOutMapper.class, DietMapper.class, UserProgressMapper.class})
+        uses = {WorkOutMapper.class, DietMapper.class, UserProgressMapper.class, UserMeasurementMapper.class}
+)
 public interface UserMapper {
 
     @Mappings({
-            @Mapping(source = "workout", target = "workout"), // mapea workoutEntity -> WorkOutDTO
-            @Mapping(source = "diet", target = "diet"),
-            @Mapping(source = "progressList", target = "progressList")
+            @Mapping(source = "progressList", target = "progressList"),
+            @Mapping(source = "measurements", target = "measurements")
     })
     UserDTO toDto(UserEntity user);
-    @Mapping(source = "birth_date", target = "birth_date")
+
+    @Mappings({
+            @Mapping(source = "birth_date", target = "birth_date"),
+    })
     UserEntity toEntity(UserDTO userDTO);
 
-    @Mapping(target = "id", ignore = true) // ignoramos el id para no sobreescribirlo
+    @Mapping(target = "id", ignore = true)
     void updateUserFromDto(UserDTO dto, @MappingTarget UserEntity entity);
 }

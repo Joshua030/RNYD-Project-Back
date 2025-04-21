@@ -13,4 +13,8 @@ public class PlanRequest {
 
     @JsonProperty("plan")
     private String plan;
+
+    public PlanRequest(String plan) {
+        this.plan = plan;
+    }
 }

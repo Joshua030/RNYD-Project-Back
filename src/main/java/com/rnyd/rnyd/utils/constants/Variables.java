@@ -54,6 +54,9 @@ public class Variables {
      public final static String SUBSCRIPTION_CREATED = "Subscription created successfully with Id: %s";
      public final static String SUBSCRIPTION_NOT_CREATED = "Subscription NOT created.";
 
+     // ERR
+     public final static String ERROR_PDF = "Error al leer el PDF.";
+
 
 
 }

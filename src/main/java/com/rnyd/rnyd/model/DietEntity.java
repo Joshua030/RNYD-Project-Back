@@ -1,5 +1,7 @@
 package com.rnyd.rnyd.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +25,20 @@ public class DietEntity {
     @Column(columnDefinition = "TEXT")
     private String note;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "preferences", columnDefinition = "TEXT")
+    private String preferences;
+
+    @Column(name = "allergies", columnDefinition = "TEXT")
+    private String allergies;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "diet_pdf")
+    private byte[] dietPdf;
+
     public String getPreferences() {
         return preferences;
     }
@@ -39,24 +55,12 @@ public class DietEntity {
         this.allergies = allergies;
     }
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "preferences", columnDefinition = "TEXT")
-    private String preferences;
-
-    @Column(name = "allergies", columnDefinition = "TEXT")
-    private String allergies;
-
-    @OneToMany(mappedBy = "userDiet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DietDayEntity> days;
-
-    public List<DietDayEntity> getDays() {
-        return days;
+    public byte[] getDietPdf() {
+        return dietPdf;
     }
 
-    public void setDays(List<DietDayEntity> days) {
-        this.days = days;
+    public void setDietPdf(byte[] dietPdf) {
+        this.dietPdf = dietPdf;
     }
 
     public Long getDietId() {

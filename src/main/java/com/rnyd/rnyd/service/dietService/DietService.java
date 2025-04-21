@@ -1,16 +1,16 @@
 package com.rnyd.rnyd.service.dietService;
 
 import com.rnyd.rnyd.dto.diet.DietDTO;
+import com.rnyd.rnyd.dto.diet.DietPDFDTO;
 import com.rnyd.rnyd.dto.diet.PreferencesAndAllergiesDTO;
 import com.rnyd.rnyd.mapper.diet.DietMapper;
-import com.rnyd.rnyd.model.DietDayEntity;
 import com.rnyd.rnyd.model.DietEntity;
-import com.rnyd.rnyd.model.DietMealEntity;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.diet.DietRepository;
 import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.DietUseCase;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,13 +41,34 @@ public class DietService implements DietUseCase {
     }
 
     @Override
-    public DietDTO getDietById(Long id) {
-        Optional<DietEntity> optionalDietEntity = dietRepository.findById(id);
-        return dietMapper.toDto(optionalDietEntity.orElse(null));
+    public DietDTO getDietByEmail(String email) {
+        Optional<UserEntity> optionalDietEntity = userRepository.findByEmail(email);
+        assert optionalDietEntity.orElse(null) != null;
+        return dietMapper.toDto(optionalDietEntity.orElse(null).getDiet());
+    }
+
+    @Transactional
+    public DietPDFDTO getPdfByEmail(String email) {
+        Optional<UserEntity> optionalDietEntity = userRepository.findByEmail(email);
+        assert optionalDietEntity.orElse(null) != null;
+
+        return dietMapper.toPDFDto(optionalDietEntity.orElse(null).getDiet());
     }
 
     public String updateDiet(DietDTO dietDTO){
-        if(getDietById(dietDTO.getDietId()) == null)
+        if(dietRepository.findById(dietDTO.getDietId()).isEmpty())
+            return null;
+
+        dietRepository.save(dietMapper.toEntity(dietDTO));
+
+        return DIET_UPDATED;
+    }
+
+
+    @Transactional
+    @Override
+    public String updateDietWithPdf(DietPDFDTO dietDTO) {
+        if(dietRepository.findById(dietDTO.getDietId()).isEmpty())
             return null;
 
         dietRepository.save(dietMapper.toEntity(dietDTO));
@@ -57,43 +78,46 @@ public class DietService implements DietUseCase {
 
     public String createDiet(DietDTO dietDTO) {
         DietEntity dietEntity = dietMapper.toEntity(dietDTO);
-
         dietEntity.setCreatedAt(LocalDateTime.now());
-
-        if (dietEntity.getDays() != null) {
-            for (DietDayEntity day : dietEntity.getDays()) {
-                day.setUserDiet(dietEntity);
-                if (day.getMeals() != null) {
-                    for (DietMealEntity meal : day.getMeals()) {
-                        meal.setDietDay(day);
-                    }
-                }
-            }
-        }
-
         dietRepository.save(dietEntity);
 
         return DIET_CREATED;
     }
 
+    @Transactional
+    @Override
+    public String createDietWithPdf(DietPDFDTO dietDTO) {
+        DietEntity dietEntity = dietMapper.toEntity(dietDTO);
+        dietEntity.setDietPdf(dietDTO.getDietPdf());
+        dietEntity.setCreatedAt(LocalDateTime.now());
+        dietRepository.save(dietEntity);
+
+        return DIET_CREATED;
+    }
+
+    @Transactional
     public String assignDiet(String email, DietDTO dietDTO){
-        if(getDietById(dietDTO.getDietId()) == null)
+        Optional<DietEntity> dietOpt = dietRepository.findById(dietDTO.getDietId());
+        Optional<UserEntity> userOpt = userRepository.findByEmail(email);
+
+        if (dietOpt.isEmpty() || userOpt.isEmpty()) {
             return null;
+        }
 
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+        DietEntity diet = dietOpt.get();
+        UserEntity user = userOpt.get();
 
-        if(userEntityOptional.isEmpty())
-            return null;
+        user.setDiet(diet);
 
-        UserEntity user = userEntityOptional.get();
-        user.setDiet(dietMapper.toEntity(dietDTO));
         userRepository.save(user);
+        dietRepository.save(diet);
 
         return DIET_ASSIGNED;
     }
 
+
     public String deleteDiet(Long id){
-        if(getDietById(id) == null)
+        if(dietRepository.findById(id).isEmpty())
             return null;
 
         dietRepository.deleteById(id);

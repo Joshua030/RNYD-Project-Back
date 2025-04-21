@@ -48,8 +48,8 @@ public class PlanController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Plans>> getAllPlans(){
-        List<Plans> response = planService.getAllPlans() ;
+    public ResponseEntity<List<PlanRequest>> getAllPlans(){
+        List<PlanRequest> response = planService.getAllPlans() ;
         if(!response.isEmpty()){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

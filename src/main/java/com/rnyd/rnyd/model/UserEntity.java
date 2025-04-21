@@ -1,5 +1,6 @@
 package com.rnyd.rnyd.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.rnyd.rnyd.utils.constants.Plans;
 import com.rnyd.rnyd.utils.constants.Roles;
 import jakarta.persistence.*;
@@ -43,21 +44,21 @@ public class UserEntity {
     @JoinColumn(name = "workout_id", referencedColumnName = "workout_id")
     private WorkoutEntity workout;
 
-    @OneToOne(optional = true)
-    @JoinColumn(name = "diet_id", referencedColumnName = "diet_id")
+    @OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "diet_id")
     private DietEntity diet;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserProgressEntity> progressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserMeasurementEntity> measurements;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserMeasurementEntity measurements;
 
-    public List<UserMeasurementEntity> getMeasurements() {
+    public UserMeasurementEntity getMeasurements() {
         return measurements;
     }
 
-    public void setMeasurements(List<UserMeasurementEntity> measurements) {
+    public void setMeasurements(UserMeasurementEntity measurements) {
         this.measurements = measurements;
     }
 

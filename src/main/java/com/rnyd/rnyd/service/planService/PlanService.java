@@ -1,5 +1,6 @@
 package com.rnyd.rnyd.service.planService;
 
+import com.rnyd.rnyd.dto.plan.PlanRequest;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.PlanSelectionUseCase;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.rnyd.rnyd.utils.constants.Plans.getPlanByName;
 
@@ -38,8 +40,9 @@ public class PlanService implements PlanSelectionUseCase {
     }
 
     @Override
-    public List<Plans> getAllPlans() {
-        return List.of(Plans.values());
+    public List<PlanRequest> getAllPlans() {
+        return Stream.of(Plans.values())
+                .map(plan -> new PlanRequest(plan.name())).toList();
     }
 
     private UserEntity getUserByEmail(String email){

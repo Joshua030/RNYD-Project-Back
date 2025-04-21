@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/measurements")
+@RequestMapping("/measurements")
 public class UserMeasurementController {
 
     private final UserMeasurementServiceImpl measurementService;
@@ -23,14 +23,14 @@ public class UserMeasurementController {
         this.measurementService = measurementService;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> saveMeasurement(@RequestBody UserMeasurementDTO dto) {
-        measurementService.saveMeasurement(dto);
+    @PostMapping("/{email}")
+    public ResponseEntity<Void> saveMeasurement(@PathVariable String email, @RequestBody UserMeasurementDTO dto) {
+        measurementService.saveMeasurement(email, dto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<UserMeasurementDTO>> getMeasurements(@PathVariable Long userId) {
-        return ResponseEntity.ok(measurementService.getMeasurementsByUser(userId));
+    @GetMapping("/{email}")
+    public ResponseEntity<List<UserMeasurementDTO>> getMeasurements(@PathVariable String email) {
+        return ResponseEntity.ok(measurementService.getMeasurementsByUser(email));
     }
 }

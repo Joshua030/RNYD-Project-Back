@@ -35,12 +35,6 @@ public class UserDTO {
     @JsonProperty("userProgress")
     private List<UserProgressDTO> progressList;
 
-    @JsonProperty(value = "diet")
-    private DietDTO diet;
-
-    @JsonProperty(value = "workout")
-    private WorkOutDTO workout;
-
     @JsonProperty(value = "measurements")
     private UserMeasurementDTO measurements;
 
@@ -58,22 +52,6 @@ public class UserDTO {
 
     public void setProgressList(List<UserProgressDTO> progressList) {
         this.progressList = progressList;
-    }
-
-    public DietDTO getDiet() {
-        return diet;
-    }
-
-    public void setDiet(DietDTO diet) {
-        this.diet = diet;
-    }
-
-    public WorkOutDTO getWorkout() {
-        return workout;
-    }
-
-    public void setWorkout(WorkOutDTO workout) {
-        this.workout = workout;
     }
 
     public String getName() {

@@ -1,11 +1,14 @@
 package com.rnyd.rnyd.model;
 
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -31,6 +34,19 @@ public class WorkoutEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
+    @Column(name = "workout_pdf", columnDefinition = "BYTEA")
+    private byte[] workoutPdf;
+
+    public byte[] getWorkoutPdf() {
+        return workoutPdf;
+    }
+
+    public void setWorkoutPdf(byte[] workoutPdf) {
+        this.workoutPdf = workoutPdf;
+    }
 
     public WorkoutEntity() {
         this.createdAt = LocalDateTime.now();

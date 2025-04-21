@@ -7,6 +7,7 @@ import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.UserUseCase;
 import com.rnyd.rnyd.utils.constants.Roles;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,12 +59,29 @@ public class UserService implements UserUseCase {
         return userRepository.findAll().stream().map(userMapper::toDto).toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDTO getUserByEmail(String email) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
 
-        return userEntityOptional.map(userMapper::toDto).orElse(null);
+        if (userEntityOptional.isPresent()) {
+            UserEntity user = userEntityOptional.get();
+
+            // Forzamos carga de los LOBs si están en diet y workout
+            if (user.getDiet() != null) {
+                user.getDiet().getDietPdf(); // fuerza la carga
+            }
+
+            if (user.getWorkout() != null) {
+                user.getWorkout().getWorkoutPdf(); // fuerza la carga
+            }
+
+            return userMapper.toDto(user);
+        }
+
+        return null;
     }
+
 
     @Override
     public Boolean checkAdminRole(String email) {

@@ -11,13 +11,11 @@ import java.util.Base64;
 @Component
 public class PasswordCripter {
 
-    @Value("${secret.key}")
-    private String secretKeyRaw;
-
     private SecretKeySpec secretKey;
 
     @PostConstruct
     public void init() {
+        final String secretKeyRaw = System.getenv("SECRET_KEY_RAW");
         byte[] key = secretKeyRaw.getBytes();
         secretKey = new SecretKeySpec(key, 0, 16, "AES");
     }

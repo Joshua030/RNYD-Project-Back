@@ -25,6 +25,17 @@ public class WorkOutDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
+    @JsonProperty("workoutPdf")
+    private byte[] workoutPdf;
+
+    public byte[] getWorkoutPdf() {
+        return workoutPdf;
+    }
+
+    public void setWorkoutPdf(byte[] workoutPdf) {
+        this.workoutPdf = workoutPdf;
+    }
+
     // Getters and Setters
     public Long getWorkoutId() {
         return workoutId;
