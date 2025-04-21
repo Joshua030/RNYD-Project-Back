@@ -40,8 +40,8 @@ public class UserEntity {
     @Column(name = "plan")
     private Plans plan;
 
-    @OneToOne(optional = true)
-    @JoinColumn(name = "workout_id", referencedColumnName = "workout_id")
+    @OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "workout_id")
     private WorkoutEntity workout;
 
     @OneToOne(optional = true, cascade = CascadeType.ALL, orphanRemoval = true)

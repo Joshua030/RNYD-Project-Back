@@ -65,9 +65,9 @@ public class DietController {
         return new ResponseEntity<>(DIET_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
     }
 
-    @PatchMapping
-    public ResponseEntity<String> updateDiet(@RequestBody DietDTO dietDTO){
-        String dietResponse = dietService.updateDiet(dietDTO);
+    @PatchMapping("/{email}")
+    public ResponseEntity<String> updateDiet(@PathVariable String email, @RequestBody DietDTO dietDTO){
+        String dietResponse = dietService.updateDiet(email, dietDTO);
 
         if(dietResponse != null){
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
@@ -76,8 +76,8 @@ public class DietController {
         return new ResponseEntity<>(DIET_NOT_UPDATED, HttpStatus.BAD_REQUEST);
     }
 
-    @PatchMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<String> updateDiet(
+    @PatchMapping(value = "/{email}",consumes = {"multipart/form-data"})
+    public ResponseEntity<String> updateDiet(@PathVariable String email,
             @RequestPart("diet") DietPDFDTO dietDTO,
             @RequestPart("dietPdf") MultipartFile pdfFile) {
 
@@ -87,7 +87,7 @@ public class DietController {
             return new ResponseEntity<>(ERROR_PDF, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String dietResponse = dietService.updateDietWithPdf(dietDTO);
+        String dietResponse = dietService.updateDietWithPdf(email, dietDTO);
 
         if (dietResponse != null) {
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
@@ -96,9 +96,9 @@ public class DietController {
         return new ResponseEntity<>(DIET_NOT_UPDATED, HttpStatus.BAD_REQUEST);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDiet(@PathVariable Long id){
-        String dietResponse = dietService.deleteDiet(id);
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteDiet(@PathVariable String email){
+        String dietResponse = dietService.deleteDiet(email);
 
         if(dietResponse != null){
             return new ResponseEntity<>(dietResponse, HttpStatus.NO_CONTENT);
@@ -127,7 +127,7 @@ public class DietController {
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(dietResponse, HttpStatus.OK);
     }
     @Transactional(readOnly = true)
     @GetMapping("/{email}")
@@ -138,7 +138,7 @@ public class DietController {
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(dietResponse, HttpStatus.OK);
     }
     @Transactional(readOnly = true)
     @GetMapping("/pdf/{email}")
@@ -146,7 +146,8 @@ public class DietController {
         DietPDFDTO dietResponse = dietService.getPdfByEmail(email);
 
         if (dietResponse == null || dietResponse.getDietPdf() == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            assert dietResponse != null;
+            return new ResponseEntity<>(dietResponse.getDietPdf(), HttpStatus.OK);
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -166,6 +167,6 @@ public class DietController {
         if(preferencesAndAllergiesDTO != null)
             return new ResponseEntity<>(preferencesAndAllergiesDTO, HttpStatus.OK);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(preferencesAndAllergiesDTO, HttpStatus.OK);
     }
 }

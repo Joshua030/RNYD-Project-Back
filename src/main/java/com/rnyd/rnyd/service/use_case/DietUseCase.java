@@ -12,15 +12,15 @@ public interface DietUseCase {
 
      DietDTO getDietByEmail(String email);
 
-     String updateDiet(DietDTO dietDTO);
-    String updateDietWithPdf(DietPDFDTO dietDTO);
+     String updateDiet(String email, DietDTO dietDTO);
+    String updateDietWithPdf(String email, DietPDFDTO dietDTO);
 
      String createDiet(DietDTO dietDTO);
     String createDietWithPdf(DietPDFDTO dietDTO);
 
      String assignDiet(String email, DietDTO dietDTO);
 
-     String deleteDiet(Long id);
+     String deleteDiet(String id);
 
      PreferencesAndAllergiesDTO getPreferencesAndAllergies(String email);
 }

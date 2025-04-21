@@ -6,10 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class WorkOutDTO {
+public class WorkOutPDFDTO {
 
     @JsonProperty("workout_id")
     private Long workoutId;
+
+    @JsonProperty("workoutPdf")
+    private byte[] workoutPdf;
 
     @JsonProperty("workout_name")
     private String workoutName;
@@ -24,15 +27,6 @@ public class WorkOutDTO {
     @JsonProperty("created_at")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
-
-    // Getters and Setters
-    public Long getWorkoutId() {
-        return workoutId;
-    }
-
-    public void setWorkoutId(Long workoutId) {
-        this.workoutId = workoutId;
-    }
 
     public String getWorkoutName() {
         return workoutName;
@@ -64,5 +58,23 @@ public class WorkOutDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public byte[] getWorkoutPdf() {
+        return workoutPdf;
+    }
+
+    public void setWorkoutPdf(byte[] workoutPdf) {
+        this.workoutPdf = workoutPdf;
+    }
+
+
+    // Getters and Setters
+    public Long getWorkoutId() {
+        return workoutId;
+    }
+
+    public void setWorkoutId(Long workoutId) {
+        this.workoutId = workoutId;
     }
 }

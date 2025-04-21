@@ -15,6 +15,5 @@ public interface DietMapper {
 
     DietEntity toEntity(DietDTO dto);
 
-    @Mapping(target = "dietPdf", source = "dietPdf")
     DietEntity toEntity(DietPDFDTO dto);
 }

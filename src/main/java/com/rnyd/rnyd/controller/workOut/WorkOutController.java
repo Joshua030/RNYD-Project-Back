@@ -1,12 +1,14 @@
 package com.rnyd.rnyd.controller.workOut;
 
 import com.rnyd.rnyd.dto.workout.WorkOutDTO;
+import com.rnyd.rnyd.dto.workout.WorkOutPDFDTO;
 import com.rnyd.rnyd.service.workOutService.WorkOutService;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,7 +36,7 @@ public class WorkOutController {
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     public ResponseEntity<String> createWorkOut(
-            @RequestPart("workout") WorkOutDTO workoutDTO,
+            @RequestPart("workout") WorkOutPDFDTO workoutDTO,
             @RequestPart("workoutPdf") MultipartFile pdfFile) {
 
         try {
@@ -43,7 +45,7 @@ public class WorkOutController {
             return new ResponseEntity<>(ERROR_PDF, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String workoutResponse = workOutService.createWorkout(workoutDTO);
+        String workoutResponse = workOutService.createWorkoutWithPdf(workoutDTO);
 
         if (workoutResponse != null) {
             return new ResponseEntity<>(workoutResponse, HttpStatus.CREATED);
@@ -53,9 +55,9 @@ public class WorkOutController {
     }
 
 
-    @PatchMapping
-    public ResponseEntity<String> updateWorkout(@RequestBody WorkOutDTO workoutDTO){
-        String workoutResponse = workOutService.updateWorkout(workoutDTO);
+    @PatchMapping("/{email}")
+    public ResponseEntity<String> updateWorkout(@PathVariable String email, @RequestBody WorkOutDTO workoutDTO){
+        String workoutResponse = workOutService.updateWorkout(email, workoutDTO);
 
         if(workoutResponse != null){
             return new ResponseEntity<>(workoutResponse, HttpStatus.OK);
@@ -75,29 +77,29 @@ public class WorkOutController {
         return new ResponseEntity<>(WORKOUT_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{id}/download")
-    public ResponseEntity<byte[]> downloadWorkoutPdf(@PathVariable Long id) {
-        WorkOutDTO workout = workOutService.getWorkOutById(id);
+    @Transactional(readOnly = true)
+    @GetMapping("/pdf/{email}")
+    public ResponseEntity<byte[]> downloadWorkoutPdf(@PathVariable String email) {
+        WorkOutPDFDTO workout = workOutService.getPdfByEmail(email);
 
         if (workout == null || workout.getWorkoutPdf() == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            assert workout != null;
+            return new ResponseEntity<>(workout.getWorkoutPdf(), HttpStatus.OK);
         }
-
-        String fileName = (workout.getWorkoutName() != null ? workout.getWorkoutName().replaceAll("\\s+", "_") : "workout_" + id) + ".pdf";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDisposition(ContentDisposition
                 .builder("attachment")
-                .filename(fileName)
+                .filename("workout_" + email + ".pdf")
                 .build());
 
         return new ResponseEntity<>(workout.getWorkoutPdf(), headers, HttpStatus.OK);
     }
 
-    @PatchMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<String> updateWorkout(
-            @RequestPart("workout") WorkOutDTO workoutDTO,
+    @PatchMapping(value = "/{email}",consumes = {"multipart/form-data"})
+    public ResponseEntity<String> updateWorkout(@PathVariable String email,
+            @RequestPart("workout") WorkOutPDFDTO workoutDTO,
             @RequestPart("workoutPdf") MultipartFile pdfFile) {
 
         try {
@@ -106,7 +108,7 @@ public class WorkOutController {
             return new ResponseEntity<>(ERROR_PDF, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String workoutResponse = workOutService.updateWorkout(workoutDTO);
+        String workoutResponse = workOutService.updateWorkoutWithPdf(email, workoutDTO);
 
         if (workoutResponse != null) {
             return new ResponseEntity<>(workoutResponse, HttpStatus.OK);
@@ -116,9 +118,9 @@ public class WorkOutController {
     }
 
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteWorkout(@PathVariable Long id){
-        String workoutResponse = workOutService.deleteWorkout(id);
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteWorkout(@PathVariable String email){
+        String workoutResponse = workOutService.deleteWorkout(email);
 
         if(workoutResponse != null){
             return new ResponseEntity<>(workoutResponse, HttpStatus.NO_CONTENT);
@@ -138,15 +140,16 @@ public class WorkOutController {
         return new ResponseEntity<>(WORKOUT_NOT_ASSIGNED, HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkOutDTO> getWorkoutById(@PathVariable Long id){
-        WorkOutDTO workoutResponse = workOutService.getWorkOutById(id);
+    @Transactional(readOnly = true)
+    @GetMapping("/{email}")
+    public ResponseEntity<WorkOutDTO> getWorkoutByEmail(@PathVariable String email){
+        WorkOutDTO workoutResponse = workOutService.getWorkOutByEmail(email);
 
         if(workoutResponse != null){
             return new ResponseEntity<>(workoutResponse, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(workoutResponse, HttpStatus.OK);
     }
 
     @GetMapping

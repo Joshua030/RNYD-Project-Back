@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.rnyd.rnyd.utils.constants.Variables.*;
@@ -55,8 +56,8 @@ public class DietService implements DietUseCase {
         return dietMapper.toPDFDto(optionalDietEntity.orElse(null).getDiet());
     }
 
-    public String updateDiet(DietDTO dietDTO){
-        if(dietRepository.findById(dietDTO.getDietId()).isEmpty())
+    public String updateDiet(String email, DietDTO dietDTO){
+        if(getDietByEmail(email) == null)
             return null;
 
         dietRepository.save(dietMapper.toEntity(dietDTO));
@@ -67,10 +68,12 @@ public class DietService implements DietUseCase {
 
     @Transactional
     @Override
-    public String updateDietWithPdf(DietPDFDTO dietDTO) {
-        if(dietRepository.findById(dietDTO.getDietId()).isEmpty())
+    public String updateDietWithPdf(String email, DietPDFDTO dietDTO) {
+        if(getDietByEmail(email) == null)
             return null;
 
+
+        dietDTO.setDietId(Objects.requireNonNull(userRepository.findByEmail(email).orElse(null)).getDiet().getDietId());
         dietRepository.save(dietMapper.toEntity(dietDTO));
 
         return DIET_UPDATED;
@@ -116,11 +119,14 @@ public class DietService implements DietUseCase {
     }
 
 
-    public String deleteDiet(Long id){
-        if(dietRepository.findById(id).isEmpty())
+    public String deleteDiet(String id){
+        UserEntity user = userRepository.findByEmail(id).orElse(null);
+
+        if (user == null || user.getDiet() == null)
             return null;
 
-        dietRepository.deleteById(id);
+        user.setDiet(null);
+        userRepository.save(user);
 
         return DIET_DELETED;
     }

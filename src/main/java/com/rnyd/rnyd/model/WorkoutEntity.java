@@ -36,8 +36,8 @@ public class WorkoutEntity {
     private LocalDateTime createdAt;
 
     @Lob
-    @Basic(fetch = FetchType.EAGER)
-    @Column(name = "workout_pdf", columnDefinition = "BYTEA")
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "workout_pdf")
     private byte[] workoutPdf;
 
     public byte[] getWorkoutPdf() {
