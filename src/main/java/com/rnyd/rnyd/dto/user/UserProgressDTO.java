@@ -5,8 +5,11 @@ import java.time.LocalDate;
 
 public class UserProgressDTO {
 
-    @JsonProperty("imageUrl")
-    private String imageUrl;
+    @JsonProperty("imageFile")
+    private byte[] imageFile;
+
+    @JsonProperty("imagePath")
+    private String imagePath;
 
     @JsonProperty("weight")
     private Double weight;
@@ -19,12 +22,20 @@ public class UserProgressDTO {
 
     // Getters y setters
 
-    public String getImageUrl() {
-        return imageUrl;
+    public byte[] getImageFile() {
+        return imageFile;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageFile(byte[] imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public Double getWeight() {

@@ -16,7 +16,6 @@ public interface DietUseCase {
     String updateDietWithPdf(String email, DietPDFDTO dietDTO);
 
      String createDiet(DietDTO dietDTO);
-    String createDietWithPdf(DietPDFDTO dietDTO);
 
      String assignDiet(String email, DietDTO dietDTO);
 

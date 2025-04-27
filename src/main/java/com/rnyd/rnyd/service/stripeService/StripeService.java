@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
 @Service
 public class StripeService implements StripeUseCase {
 
@@ -87,18 +88,24 @@ public class StripeService implements StripeUseCase {
     }
 
     @Override
-    public PaymentLink createPaymentLink(StripeDTO stripeDTO) {
+    public Session createCheckoutSession(StripeDTO stripeDTO) {
         try {
             Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
 
-            PaymentLinkCreateParams paymentLinkCreateParams = PaymentLinkCreateParams.builder()
-                    .addLineItem(LineItem.builder()
-                            .setPrice(stripeDTO.getPriceId())
-                            .setQuantity(1L)
-                            .build())
+            SessionCreateParams params = SessionCreateParams.builder()
+                    .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+                    .setSuccessUrl(stripeDTO.getSuccessUrl())
+                    .setCancelUrl(stripeDTO.getCancelUrl())
+                    .addLineItem(
+                            SessionCreateParams.LineItem.builder()
+                                    .setPrice(stripeDTO.getPriceId())
+                                    .setQuantity(1L)
+                                    .build()
+                    )
                     .build();
-            return PaymentLink.create(paymentLinkCreateParams);
-        }catch (StripeException ex){
+
+            return Session.create(params);
+        } catch (StripeException ex) {
             ex.printStackTrace();
         }
         return null;

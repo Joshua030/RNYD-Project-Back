@@ -15,4 +15,6 @@ public interface UserProgressRepository extends JpaRepository<UserProgressEntity
     List<UserProgressEntity> findByUserOrderByProgressDateDesc(UserEntity user);
 
     Optional<UserProgressEntity> findByUserAndProgressDate(UserEntity user, LocalDate progressDate);
+
+    List<UserProgressEntity> findByUserEmail(String email);
 }

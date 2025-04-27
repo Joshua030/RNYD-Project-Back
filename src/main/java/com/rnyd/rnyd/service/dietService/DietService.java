@@ -11,11 +11,18 @@ import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.DietUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.rnyd.rnyd.utils.constants.Variables.*;
 
@@ -38,8 +45,23 @@ public class DietService implements DietUseCase {
 
     @Override
     public List<DietDTO> getAllDiets() {
-        return dietRepository.findAll().stream().map(dietMapper::toDto).toList();
+        List<DietEntity> dietEntities = dietRepository.findAll();
+
+        // Mapear las entidades a DTOs y asignar el URL del PDF
+        List<DietDTO> dietDTOList = dietEntities.stream()
+                .map(dietEntity -> {
+                    DietDTO dietDTO = dietMapper.toDto(dietEntity);
+
+                    // Asignar la URL del PDF si está disponible
+                    dietDTO.setDietUrl("http://localhost:8080"+dietEntity.getDietUrl());  // Este campo debe existir en el DTO
+
+                    return dietDTO;
+                })
+                .toList();
+
+        return dietDTOList;
     }
+
 
     @Override
     public DietDTO getDietByEmail(String email) {
@@ -88,15 +110,35 @@ public class DietService implements DietUseCase {
     }
 
     @Transactional
-    @Override
-    public String createDietWithPdf(DietPDFDTO dietDTO) {
-        DietEntity dietEntity = dietMapper.toEntity(dietDTO);
-        dietEntity.setDietPdf(dietDTO.getDietPdf());
-        dietEntity.setCreatedAt(LocalDateTime.now());
-        dietRepository.save(dietEntity);
+    public String createDietWithPdf(DietDTO dietDTO, MultipartFile dietPdfFile) {
+        try {
+            // Crear un nombre único para el archivo PDF
+            String uploadsDir = "public/uploads/";
 
-        return DIET_CREATED;
+            String fileName = UUID.randomUUID().toString() + "_" + dietPdfFile.getOriginalFilename();
+            Path filePath = Paths.get(uploadsDir, fileName);
+
+            // Guardar el archivo PDF en el servidor
+            Files.copy(dietPdfFile.getInputStream(), filePath);
+
+            // Crear la URL pública del archivo PDF
+            String dietUrl = "/uploads/" + fileName;
+
+            // Guardar la dieta en la base de datos
+            DietEntity dietEntity = new DietEntity();
+            dietEntity.setDietName(dietDTO.getDietName());
+            dietEntity.setNote(dietDTO.getNote());
+            dietEntity.setDietPdf(dietPdfFile.getBytes());  // Guardar el archivo PDF
+            dietEntity.setDietUrl(dietUrl);  // Guardar la URL
+            dietRepository.save(dietEntity);
+
+            return "Diet created successfully!";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error while saving the diet PDF.";
+        }
     }
+
 
     @Transactional
     public String assignDiet(String email, DietDTO dietDTO){

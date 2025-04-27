@@ -1,5 +1,6 @@
 package com.rnyd.rnyd.service.workOutService;
 
+import com.rnyd.rnyd.dto.diet.DietDTO;
 import com.rnyd.rnyd.dto.diet.DietPDFDTO;
 import com.rnyd.rnyd.dto.workout.WorkOutDTO;
 import com.rnyd.rnyd.dto.workout.WorkOutPDFDTO;
@@ -12,11 +13,18 @@ import com.rnyd.rnyd.repository.workout.WorkOutRepository;
 import com.rnyd.rnyd.service.use_case.WorkOutUseCase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.rnyd.rnyd.utils.constants.Variables.*;
 
@@ -62,14 +70,35 @@ public class WorkOutService implements WorkOutUseCase {
         return WORKOUT_CREATED;
     }
 
-    @Transactional
-    public String createWorkoutWithPdf(WorkOutPDFDTO workOutDTO){
-        WorkoutEntity workoutEntity = workOutMapper.toEntity(workOutDTO);
-        workoutEntity.setWorkoutPdf(workOutDTO.getWorkoutPdf());
-        workoutEntity.setCreatedAt(LocalDateTime.now());
-        workOutRepository.save(workoutEntity);
-        return WORKOUT_CREATED;
+    public String createWorkoutWithPdf(WorkOutPDFDTO workoutDTO, MultipartFile dietPdfFile ) {
+        try {
+            String uploadsDir = "public/uploads/";
+
+            String fileName = UUID.randomUUID().toString() + "_" + dietPdfFile.getOriginalFilename();
+            Path filePath = Paths.get(uploadsDir, fileName);
+
+            // Guardar el archivo PDF en el servidor
+            Files.copy(dietPdfFile.getInputStream(), filePath);
+
+            // Crear la URL pública del archivo PDF
+            String dietUrl = "/uploads/" + fileName;
+
+            // Guardar la dieta en la base de datos
+            WorkoutEntity dietEntity = new WorkoutEntity();
+            dietEntity.setWorkoutName(workoutDTO.getWorkoutName());
+            dietEntity.setNote(workoutDTO.getNote());
+            dietEntity.setWorkoutPdf(dietPdfFile.getBytes());  // Guardar el archivo PDF
+            dietEntity.setWorkoutUrl(dietUrl);  // Guardar la URL
+            workOutRepository.save(dietEntity);
+
+            return "Workout created successfully";  // O el mensaje que prefieras
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error al guardar el PDF";
+        }
     }
+
 
     @Transactional
     public WorkOutPDFDTO getPdfByEmail(String email) {
@@ -117,7 +146,21 @@ public class WorkOutService implements WorkOutUseCase {
     }
 
     public List<WorkOutDTO> getAllWorkouts(){
-        return workOutRepository.findAll().stream().map(workOutMapper::toDto).toList();
+        List<WorkoutEntity> dietEntities = workOutRepository.findAll();
+
+        // Mapear las entidades a DTOs y asignar el URL del PDF
+        List<WorkOutDTO> dietDTOList = dietEntities.stream()
+                .map(dietEntity -> {
+                    WorkOutDTO dietDTO = workOutMapper.toDto(dietEntity);
+
+                    // Asignar la URL del PDF si está disponible
+                    dietDTO.setWorkoutUrl("http://localhost:8080"+dietEntity.getWorkoutUrl());  // Este campo debe existir en el DTO
+
+                    return dietDTO;
+                })
+                .toList();
+
+        return dietDTOList;
     }
 
 }

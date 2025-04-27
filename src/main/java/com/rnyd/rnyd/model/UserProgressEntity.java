@@ -18,6 +18,7 @@ public class UserProgressEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Column(name = "image_url")
     private String imageUrl;
     private Double weight;
     private Double height;

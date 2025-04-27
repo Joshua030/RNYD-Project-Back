@@ -31,6 +31,17 @@ public class DietEntity {
     @Column(name = "preferences", columnDefinition = "TEXT")
     private String preferences;
 
+    @Column(name = "diet_url")
+    private String dietUrl; // Para almacenar la URL del archivo PDF
+
+    public String getDietUrl() {
+        return dietUrl;
+    }
+
+    public void setDietUrl(String dietUrl) {
+        this.dietUrl = dietUrl;
+    }
+
     @Column(name = "allergies", columnDefinition = "TEXT")
     private String allergies;
 
@@ -38,6 +49,8 @@ public class DietEntity {
     @Basic(fetch = FetchType.LAZY)
     @Column(name = "diet_pdf")
     private byte[] dietPdf;
+
+
 
     public String getPreferences() {
         return preferences;

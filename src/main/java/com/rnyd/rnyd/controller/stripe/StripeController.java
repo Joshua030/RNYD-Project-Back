@@ -3,9 +3,11 @@ package com.rnyd.rnyd.controller.stripe;
 import com.rnyd.rnyd.dto.stripe.StripeDTO;
 import com.rnyd.rnyd.dto.stripe.StripePaymentHistoryDTO;
 import com.rnyd.rnyd.dto.stripe.StripePaymentLinkDTO;
+import com.rnyd.rnyd.dto.stripe.StripeSessionResponse;
 import com.rnyd.rnyd.dto.stripe.SubscriptionDTO;
 import com.rnyd.rnyd.service.stripeService.StripeService;
 import com.stripe.model.PaymentLink;
+import com.stripe.model.checkout.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,12 +41,12 @@ public class StripeController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<StripePaymentLinkDTO> subscribe(@RequestBody StripeDTO stripeDTO){
-        PaymentLink paymentLink = stripeService.createPaymentLink(stripeDTO);
+    public ResponseEntity<StripeSessionResponse> subscribe(@RequestBody StripeDTO stripeDTO){
+        Session session = stripeService.createCheckoutSession(stripeDTO);
 
-        if(paymentLink != null) {
-            StripePaymentLinkDTO responseDTO = new StripePaymentLinkDTO(paymentLink.getId(), paymentLink.getUrl());
-            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+        if(session != null) {
+            StripeSessionResponse response = new StripeSessionResponse(session);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

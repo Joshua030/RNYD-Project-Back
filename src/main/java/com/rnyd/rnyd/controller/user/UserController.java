@@ -39,9 +39,9 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PatchMapping
-    public ResponseEntity<String> modifyUser(@RequestBody UserDTO userDTO){
-        String response = userService.modifyUser(userDTO);
+    @PatchMapping("/{email}")
+    public ResponseEntity<String> modifyUser(@PathVariable String email, @RequestBody UserDTO userDTO){
+        String response = userService.modifyUser(email, userDTO);
 
         if(response != null)
             return new ResponseEntity<>(response, HttpStatus.OK);

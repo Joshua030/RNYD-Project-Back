@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserUseCase {
     String deleteUser(String email);
-    String modifyUser(UserDTO userDTO);
+    String modifyUser(String email, UserDTO userDTO);
     List<UserDTO> getAllUsers();
     UserDTO getUserByEmail(String email);
     Boolean checkAdminRole(String email);

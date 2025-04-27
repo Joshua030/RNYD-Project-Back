@@ -10,11 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,25 +47,19 @@ public class DietController {
 
         return new ResponseEntity<>(DIET_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
     }
+
     @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> createDiet(
-            @RequestPart("diet") DietPDFDTO dietDTO,
-            @RequestPart("dietPdf") MultipartFile pdfFile) {
+    public ResponseEntity<String> createDietWithPdf(@RequestPart DietDTO dietDTO,
+                                                    @RequestParam("dietPdfFile") MultipartFile dietPdfFile) {
+        String result = dietService.createDietWithPdf(dietDTO, dietPdfFile);
 
-        try {
-            dietDTO.setDietPdf(pdfFile.getBytes());
-        } catch (IOException e) {
-            return new ResponseEntity<>(ERROR_PDF, HttpStatus.INTERNAL_SERVER_ERROR);
+        if (result != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } else {
+            return ResponseEntity.badRequest().body(result);
         }
-
-        String dietResponse = dietService.createDietWithPdf(dietDTO);
-
-        if (dietResponse != null) {
-            return new ResponseEntity<>(dietResponse, HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<>(DIET_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
     }
+
 
     @PatchMapping("/{email}")
     public ResponseEntity<String> updateDiet(@PathVariable String email, @RequestBody DietDTO dietDTO){
@@ -140,6 +136,7 @@ public class DietController {
 
         return new ResponseEntity<>(dietResponse, HttpStatus.OK);
     }
+
     @Transactional(readOnly = true)
     @GetMapping("/pdf/{email}")
     public ResponseEntity<byte[]> downloadDietPdfByEmail(@PathVariable String email) {

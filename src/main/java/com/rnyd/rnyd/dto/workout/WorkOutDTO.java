@@ -25,6 +25,17 @@ public class WorkOutDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
+    @JsonProperty("workout_url")
+    private String workoutUrl;
+
+    public String getWorkoutUrl() {
+        return workoutUrl;
+    }
+
+    public void setWorkoutUrl(String workoutUrl) {
+        this.workoutUrl = workoutUrl;
+    }
+
     // Getters and Setters
     public Long getWorkoutId() {
         return workoutId;

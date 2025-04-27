@@ -40,6 +40,17 @@ public class WorkoutEntity {
     @Column(name = "workout_pdf")
     private byte[] workoutPdf;
 
+    public String getWorkoutUrl() {
+        return workoutUrl;
+    }
+
+    public void setWorkoutUrl(String workoutUrl) {
+        this.workoutUrl = workoutUrl;
+    }
+
+    @Column(name = "workout_url")
+    private String workoutUrl;
+
     public byte[] getWorkoutPdf() {
         return workoutPdf;
     }

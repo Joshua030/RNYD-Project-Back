@@ -32,6 +32,17 @@ public class DietDTO {
     @JsonProperty("allergies")
     private String allergies;
 
+    public String getDietUrl() {
+        return dietUrl;
+    }
+
+    public void setDietUrl(String dietUrl) {
+        this.dietUrl = dietUrl;
+    }
+
+    @JsonProperty("diet_url")
+    private String dietUrl;
+
     public String getPreferences() {
         return preferences;
     }

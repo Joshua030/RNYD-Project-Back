@@ -15,6 +15,12 @@ public class StripeDTO {
     @JsonProperty("priceId")
     private String priceId;
 
+    @JsonProperty("successUrl")
+    private String successUrl;
+
+    @JsonProperty("cancelUrl")
+    private String cancelUrl;
+
     public String getName() {
         return name;
     }
@@ -44,6 +50,22 @@ public class StripeDTO {
 
     public void setPriceId(String priceId) {
         this.priceId = priceId;
+    }
+
+    public String getSuccessUrl() {
+        return successUrl;
+    }
+
+    public void setSuccessUrl(String successUrl) {
+        this.successUrl = successUrl;
+    }
+
+    public String getCancelUrl() {
+        return cancelUrl;
+    }
+
+    public void setCancelUrl(String cancelUrl) {
+        this.cancelUrl = cancelUrl;
     }
 
 }

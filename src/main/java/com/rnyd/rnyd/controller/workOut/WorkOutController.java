@@ -45,7 +45,7 @@ public class WorkOutController {
             return new ResponseEntity<>(ERROR_PDF, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        String workoutResponse = workOutService.createWorkoutWithPdf(workoutDTO);
+        String workoutResponse = workOutService.createWorkoutWithPdf(workoutDTO,pdfFile);
 
         if (workoutResponse != null) {
             return new ResponseEntity<>(workoutResponse, HttpStatus.CREATED);

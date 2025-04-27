@@ -5,6 +5,7 @@ import com.rnyd.rnyd.mapper.user.UserMapper;
 import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.UserUseCase;
+import com.rnyd.rnyd.utils.NullAwareBeanUtils;
 import com.rnyd.rnyd.utils.constants.Roles;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,19 +41,21 @@ public class UserService implements UserUseCase {
     }
 
     @Override
-    public String modifyUser(UserDTO userDTO) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(userDTO.getEmail());
+    public String modifyUser(String email, UserDTO userDTO) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
 
-        if(userEntityOptional.isEmpty())
+        if (userEntityOptional.isEmpty())
             return null;
 
         UserEntity existingUser = userEntityOptional.get();
 
-        userMapper.updateUserFromDto(userDTO, existingUser);
+        NullAwareBeanUtils.copyNonNullProperties(userDTO, existingUser);
+
         userRepository.save(existingUser);
 
         return USER_UPDATED;
     }
+
 
     @Override
     public List<UserDTO> getAllUsers() {
