@@ -1,3 +1,20 @@
+# Para correr la app en local
+```bash
+# Clonar el repositorio
+git clone https://github.com/Jorexbp/RNYD.git
+cd RNYD
+
+# Compilar y descargar dependencias
+mvn clean install
+
+# Correr la aplicación
+mvn spring-boot:run
+```
+
+
+
+
+
 # 📌 API Documentation
 
 Este repositorio contiene los endpoints principales para autenticación, registro y progreso de usuario.
