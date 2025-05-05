@@ -48,7 +48,7 @@ public class SignUpService implements SignUpUseCase {
         }
 
         userSignUpRequest.setKeyword(passwordCripter.hashPassword(userSignUpRequest.getKeyword()));
-        userSignUpRequest.setPlan(Plans.NONE);
+        // userSignUpRequest.setPlan(Plans.NONE);
         // Guardamos nuestro usuario en BBDD
         UserEntity userEntity =  userRepository.save(userMapper.toEntity(userSignUpRequest));
 

@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface PlanSelectionUseCase {
 
-    String selectPlan(String email, String plan);
+    // String selectPlan(String email, String plan);
 
-    String cancelPlan(String email);
+    // String cancelPlan(String email);
 
-    List<PlanRequest> getAllPlans();
+    // List<PlanRequest> getAllPlans();
 }

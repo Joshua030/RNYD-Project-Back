@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SubscriptionRepository extends JpaRepository<SubscriptionEntity, String> {
-
+  boolean existsByName(String name);
 }

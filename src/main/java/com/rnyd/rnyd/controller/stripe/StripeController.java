@@ -11,6 +11,8 @@ import com.stripe.model.checkout.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,24 +29,24 @@ public class StripeController {
 
     private final StripeService stripeService;
 
-    StripeController(StripeService stripeService){
+    StripeController(StripeService stripeService) {
         this.stripeService = stripeService;
     }
 
     @PostMapping("/create-subscription")
-    public ResponseEntity<String> createSubscription(@RequestBody StripeDTO stripeDTO){
+    public ResponseEntity<String> createSubscription(@RequestBody StripeDTO stripeDTO) {
         String response = stripeService.createSubscription(stripeDTO);
-        if(response != null)
+        if (response != null)
             return new ResponseEntity<>(String.format(SUBSCRIPTION_CREATED, response), HttpStatus.CREATED);
         else
             return new ResponseEntity<>(SUBSCRIPTION_NOT_CREATED, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<StripeSessionResponse> subscribe(@RequestBody StripeDTO stripeDTO){
+    public ResponseEntity<StripeSessionResponse> subscribe(@RequestBody StripeDTO stripeDTO) {
         Session session = stripeService.createCheckoutSession(stripeDTO);
 
-        if(session != null) {
+        if (session != null) {
             StripeSessionResponse response = new StripeSessionResponse(session);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } else {
@@ -52,9 +54,22 @@ public class StripeController {
         }
     }
 
+    @PatchMapping("/assign-subscription/{email}/{productId}")
+    public ResponseEntity<String> assignSubscriptionToUser(
+            @PathVariable String email,
+            @PathVariable String productId) {
+
+        boolean result = stripeService.assignSubscriptionToUser(email, productId);
+        if (result) {
+            return new ResponseEntity<>("Subscription assigned successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User or product not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping
-    public ResponseEntity<List<SubscriptionDTO>> getAllSubscriptions(){
-         return new ResponseEntity<>(stripeService.getAllSubscriptions(), HttpStatus.OK);
+    public ResponseEntity<List<SubscriptionDTO>> getAllSubscriptions() {
+        return new ResponseEntity<>(stripeService.getAllSubscriptions(), HttpStatus.OK);
     }
 
     @GetMapping("/payments")

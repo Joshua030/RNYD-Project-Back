@@ -5,7 +5,8 @@ import com.rnyd.rnyd.dto.diet.DietPDFDTO;
 import com.rnyd.rnyd.dto.diet.PreferencesAndAllergiesDTO;
 import com.rnyd.rnyd.service.dietService.DietService;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,21 +39,10 @@ public class DietController {
         this.dietService = dietService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<String> createDiet(@RequestBody DietDTO dietDTO){
-        String dietResponse = dietService.createDiet(dietDTO);
-
-        if (dietResponse != null) {
-            return new ResponseEntity<>(dietResponse, HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<>(DIET_ALREADY_EXISTS, HttpStatus.BAD_REQUEST);
-    }
-
-    @PostMapping(value = "/create", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> createDietWithPdf(@RequestPart DietDTO dietDTO,
-                                                    @RequestParam("dietPdfFile") MultipartFile dietPdfFile) {
-        String result = dietService.createDietWithPdf(dietDTO, dietPdfFile);
+    @PostMapping(value = "/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<String> createDiet(@RequestPart DietDTO dietDTO,
+            @RequestParam("dietPdfFile") MultipartFile dietPdfFile) {
+        String result = dietService.createDiet(dietDTO, dietPdfFile);
 
         if (result != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
@@ -60,54 +51,11 @@ public class DietController {
         }
     }
 
-
-    @PatchMapping("/{email}")
-    public ResponseEntity<String> updateDiet(@PathVariable String email, @RequestBody DietDTO dietDTO){
-        String dietResponse = dietService.updateDiet(email, dietDTO);
-
-        if(dietResponse != null){
-            return new ResponseEntity<>(dietResponse, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(DIET_NOT_UPDATED, HttpStatus.BAD_REQUEST);
-    }
-
-    @PatchMapping(value = "/{email}",consumes = {"multipart/form-data"})
-    public ResponseEntity<String> updateDiet(@PathVariable String email,
-            @RequestPart("diet") DietPDFDTO dietDTO,
-            @RequestPart("dietPdf") MultipartFile pdfFile) {
-
-        try {
-            dietDTO.setDietPdf(pdfFile.getBytes());
-        } catch (IOException e) {
-            return new ResponseEntity<>(ERROR_PDF, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        String dietResponse = dietService.updateDietWithPdf(email, dietDTO);
-
-        if (dietResponse != null) {
-            return new ResponseEntity<>(dietResponse, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(DIET_NOT_UPDATED, HttpStatus.BAD_REQUEST);
-    }
-
-    @DeleteMapping("/{email}")
-    public ResponseEntity<String> deleteDiet(@PathVariable String email){
-        String dietResponse = dietService.deleteDiet(email);
-
-        if(dietResponse != null){
-            return new ResponseEntity<>(dietResponse, HttpStatus.NO_CONTENT);
-        }
-
-        return new ResponseEntity<>(DIET_NOT_DELETED, HttpStatus.BAD_REQUEST);
-    }
-
     @PostMapping("/assign/{email}")
-    public ResponseEntity<String> assignDiet(@PathVariable String email, @RequestBody DietDTO dietDTO){
+    public ResponseEntity<String> assignDiet(@PathVariable String email, @RequestBody DietDTO dietDTO) {
         String dietResponse = dietService.assignDiet(email, dietDTO);
 
-        if(dietResponse != null){
+        if (dietResponse != null) {
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
         }
 
@@ -116,21 +64,26 @@ public class DietController {
 
     @Transactional(readOnly = true)
     @GetMapping
-    public ResponseEntity<List<DietDTO>> getAllDiets(){
-        List<DietDTO> dietResponse = dietService.getAllDiets();
+    public ResponseEntity<List<DietDTO>> getDiets(@RequestParam(required = false) String email) {
+        List<DietDTO> dietResponse;
 
-        if(!dietResponse.isEmpty()){
-            return new ResponseEntity<>(dietResponse, HttpStatus.OK);
+        if ("none".equalsIgnoreCase(email)) {
+            dietResponse = dietService.getDietsWithoutUser();
+        } else if (email != null && !email.isBlank()) {
+            dietResponse = dietService.getDietsByEmailWithUser(email);
+        } else {
+            dietResponse = dietService.getAllDietsWithUsers();
         }
 
         return new ResponseEntity<>(dietResponse, HttpStatus.OK);
     }
+
     @Transactional(readOnly = true)
     @GetMapping("/{email}")
-    public ResponseEntity<DietDTO> getDietByEmail(@PathVariable String email){
-        DietDTO dietResponse = dietService.getDietByEmail(email);
+    public ResponseEntity<List<DietDTO>> getDietsByEmail(@PathVariable String email) {
+        List<DietDTO> dietResponse = dietService.getDietsByEmail(email);
 
-        if(dietResponse != null){
+        if (!dietResponse.isEmpty()) {
             return new ResponseEntity<>(dietResponse, HttpStatus.OK);
         }
 
@@ -138,32 +91,38 @@ public class DietController {
     }
 
     @Transactional(readOnly = true)
-    @GetMapping("/pdf/{email}")
-    public ResponseEntity<byte[]> downloadDietPdfByEmail(@PathVariable String email) {
-        DietPDFDTO dietResponse = dietService.getPdfByEmail(email);
+    @GetMapping("/single/{id}")
+    public ResponseEntity<DietDTO> getDietById(@PathVariable Long id) {
+        DietDTO diet = dietService.getDietById(id);
+        if (diet != null) {
+            return new ResponseEntity<>(diet, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
-        if (dietResponse == null || dietResponse.getDietPdf() == null) {
-            assert dietResponse != null;
-            return new ResponseEntity<>(dietResponse.getDietPdf(), HttpStatus.OK);
+    @PatchMapping(value = "/update/{dietId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<String> updateDietWithPdf(
+            @PathVariable Long dietId,
+            @RequestPart("dietDTO") DietDTO dietDTO,
+            @RequestPart(value = "dietPdfFile", required = false) MultipartFile dietPdfFile) {
+
+        String result = dietService.updateDietWithOptionalPdf(dietId, dietDTO, dietPdfFile);
+
+        if (result == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Diet not found.");
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDisposition(ContentDisposition
-                .builder("attachment")
-                .filename("diet_" + email + ".pdf")
-                .build());
-
-        return new ResponseEntity<>(dietResponse.getDietPdf(), headers, HttpStatus.OK);
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/preferences/{email}")
-    public ResponseEntity<PreferencesAndAllergiesDTO> getPreferencesAndAllergies(@PathVariable String email){
-        PreferencesAndAllergiesDTO preferencesAndAllergiesDTO = dietService.getPreferencesAndAllergies(email);
-
-        if(preferencesAndAllergiesDTO != null)
-            return new ResponseEntity<>(preferencesAndAllergiesDTO, HttpStatus.OK);
-
-        return new ResponseEntity<>(preferencesAndAllergiesDTO, HttpStatus.OK);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteDiet(@PathVariable Long id) {
+        boolean deleted = dietService.deleteDietById(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dieta no encontrada.");
+        }
     }
+
 }

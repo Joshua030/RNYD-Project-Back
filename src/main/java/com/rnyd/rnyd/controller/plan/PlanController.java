@@ -23,36 +23,36 @@ import static com.rnyd.rnyd.utils.constants.Variables.USER_EMAIL_DOES_NOT_EXISTS
 public class PlanController {
 
     // Refactor posible; Juntar el assign con el change plan
-    private final PlanService planService;
+    // private final PlanService planService;
 
-    public PlanController(PlanService planService) {
-        this.planService = planService;
-    }
+    // public PlanController(PlanService planService) {
+    //     this.planService = planService;
+    // }
 
-    @PatchMapping("/assign/{email}")
-    public ResponseEntity<String> assignPlan(@PathVariable String email, @RequestBody PlanRequest plan){
-        String response = planService.selectPlan(email, plan.getPlan()) ;
-        if(response != null){
-            return new ResponseEntity<>(String.format(PLAN_ASSIGNED, response), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(USER_EMAIL_DOES_NOT_EXISTS, HttpStatus.NOT_FOUND);
-    }
+    // @PatchMapping("/assign/{email}")
+    // public ResponseEntity<String> assignPlan(@PathVariable String email, @RequestBody PlanRequest plan){
+    //     String response = planService.selectPlan(email, plan.getPlan()) ;
+    //     if(response != null){
+    //         return new ResponseEntity<>(String.format(PLAN_ASSIGNED, response), HttpStatus.OK);
+    //     }
+    //     return new ResponseEntity<>(USER_EMAIL_DOES_NOT_EXISTS, HttpStatus.NOT_FOUND);
+    // }
 
-    @PatchMapping("/cancel/{email}")
-    public ResponseEntity<String> cancelPlan(@PathVariable String email){
-        String response = planService.cancelPlan(email) ;
-        if(response != null){
-            return new ResponseEntity<>("Plan cancelado.", HttpStatus.OK);
-        }
-        return new ResponseEntity<>(USER_EMAIL_DOES_NOT_EXISTS, HttpStatus.NOT_FOUND);
-    }
+    // @PatchMapping("/cancel/{email}")
+    // public ResponseEntity<String> cancelPlan(@PathVariable String email){
+    //     String response = planService.cancelPlan(email) ;
+    //     if(response != null){
+    //         return new ResponseEntity<>("Plan cancelado.", HttpStatus.OK);
+    //     }
+    //     return new ResponseEntity<>(USER_EMAIL_DOES_NOT_EXISTS, HttpStatus.NOT_FOUND);
+    // }
 
-    @GetMapping
-    public ResponseEntity<List<PlanRequest>> getAllPlans(){
-        List<PlanRequest> response = planService.getAllPlans() ;
-        if(!response.isEmpty()){
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
+    // @GetMapping
+    // public ResponseEntity<List<PlanRequest>> getAllPlans(){
+    //     List<PlanRequest> response = planService.getAllPlans() ;
+    //     if(!response.isEmpty()){
+    //         return new ResponseEntity<>(response, HttpStatus.OK);
+    //     }
+    //     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    // }
 }

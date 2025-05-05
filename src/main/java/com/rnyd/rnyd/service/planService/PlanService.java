@@ -16,37 +16,37 @@ import static com.rnyd.rnyd.utils.constants.Plans.getPlanByName;
 @Service
 public class PlanService implements PlanSelectionUseCase {
 
-    private final UserRepository userRepository;
+    // private final UserRepository userRepository;
 
-    public PlanService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    // public PlanService(UserRepository userRepository) {
+    //     this.userRepository = userRepository;
+    // }
 
-    @Override
-    public String selectPlan(String email, String plan) {
-        UserEntity entity = getUserByEmail(email);
-        if (entity == null)
-            return null;
+    // @Override
+    // public String selectPlan(String email, String plan) {
+    //     UserEntity entity = getUserByEmail(email);
+    //     if (entity == null)
+    //         return null;
 
-        entity.setPlan(getPlanByName(plan));
-        userRepository.save(entity);
+    //     entity.setPlan(getPlanByName(plan));
+    //     userRepository.save(entity);
 
-        return plan;
-    }
+    //     return plan;
+    // }
 
-    @Override
-    public String cancelPlan(String email) {
-        return selectPlan(email, Plans.NONE.name());
-    }
+    // @Override
+    // public String cancelPlan(String email) {
+    //     return selectPlan(email, Plans.NONE.name());
+    // }
 
-    @Override
-    public List<PlanRequest> getAllPlans() {
-        return Stream.of(Plans.values())
-                .map(plan -> new PlanRequest(plan.name())).toList();
-    }
+    // @Override
+    // public List<PlanRequest> getAllPlans() {
+    //     return Stream.of(Plans.values())
+    //             .map(plan -> new PlanRequest(plan.name())).toList();
+    // }
 
-    private UserEntity getUserByEmail(String email){
-        Optional<UserEntity> user = userRepository.findByEmail(email);
-        return user.orElse(null);
-    }
+    // private UserEntity getUserByEmail(String email){
+    //     Optional<UserEntity> user = userRepository.findByEmail(email);
+    //     return user.orElse(null);
+    // }
 }

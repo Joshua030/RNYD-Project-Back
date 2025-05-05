@@ -22,7 +22,6 @@ public class UserService implements UserUseCase {
     private final UserMapper userMapper;
     private final UserRepository userRepository;
 
-
     public UserService(UserMapper userMapper, UserRepository userRepository) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
@@ -32,7 +31,7 @@ public class UserService implements UserUseCase {
     public String deleteUser(String email) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
 
-        if(userEntityOptional.isEmpty())
+        if (userEntityOptional.isEmpty())
             return null;
 
         userRepository.delete(userEntityOptional.get());
@@ -56,7 +55,6 @@ public class UserService implements UserUseCase {
         return USER_UPDATED;
     }
 
-
     @Override
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream().map(userMapper::toDto).toList();
@@ -70,13 +68,22 @@ public class UserService implements UserUseCase {
         if (userEntityOptional.isPresent()) {
             UserEntity user = userEntityOptional.get();
 
-            // Forzamos carga de los LOBs si están en diet y workout
-            if (user.getDiet() != null) {
-                user.getDiet().getDietPdf(); // fuerza la carga
+            // Force load all diet PDFs
+            if (user.getDiets() != null && !user.getDiets().isEmpty()) {
+                user.getDiets().forEach(d -> {
+                    if (d.getDietPdf() != null) {
+                        byte[] preview = d.getDietPdf(); // force fetch
+                    }
+                });
             }
 
-            if (user.getWorkout() != null) {
-                user.getWorkout().getWorkoutPdf(); // fuerza la carga
+            // Force load all workout PDFs
+            if (user.getWorkouts() != null && !user.getWorkouts().isEmpty()) {
+                user.getWorkouts().forEach(w -> {
+                    if (w.getWorkoutPdf() != null) {
+                        byte[] preview = w.getWorkoutPdf(); // force fetch
+                    }
+                });
             }
 
             return userMapper.toDto(user);
@@ -85,11 +92,10 @@ public class UserService implements UserUseCase {
         return null;
     }
 
-
     @Override
     public Boolean checkAdminRole(String email) {
         UserDTO userDTO = getUserByEmail(email);
-        if(userDTO == null)
+        if (userDTO == null)
             return null;
 
         return userDTO.getRole() == Roles.ADMIN;

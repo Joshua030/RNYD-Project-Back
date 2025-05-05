@@ -32,6 +32,13 @@ public class DietDTO {
     @JsonProperty("allergies")
     private String allergies;
 
+    @JsonProperty("user_email")
+private String userEmail;
+
+@JsonProperty("user_name")
+private String userName;
+
+
     public String getDietUrl() {
         return dietUrl;
     }
@@ -99,4 +106,21 @@ public class DietDTO {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+    
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+    
+    public String getUserName() {
+        return userName;
+    }
+    
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+     
 }

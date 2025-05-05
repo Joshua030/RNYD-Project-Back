@@ -5,7 +5,9 @@ import com.rnyd.rnyd.dto.stripe.StripePaymentHistoryDTO;
 import com.rnyd.rnyd.dto.stripe.SubscriptionDTO;
 import com.rnyd.rnyd.mapper.SubscriptionMapper;
 import com.rnyd.rnyd.model.SubscriptionEntity;
+import com.rnyd.rnyd.model.UserEntity;
 import com.rnyd.rnyd.repository.stripe.SubscriptionRepository;
+import com.rnyd.rnyd.repository.user.UserRepository;
 import com.rnyd.rnyd.service.use_case.StripeUseCase;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -29,18 +31,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+
 @Service
 public class StripeService implements StripeUseCase {
 
-    public StripeService(SubscriptionRepository subscriptionRepository, SubscriptionMapper subscriptionMapper) {
+    public StripeService(SubscriptionRepository subscriptionRepository, SubscriptionMapper subscriptionMapper,   UserRepository userRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.subscriptionMapper = subscriptionMapper;
+        this.userRepository = userRepository;
     }
 
     private SubscriptionRepository subscriptionRepository;
     private SubscriptionMapper subscriptionMapper;
+    private final UserRepository userRepository;
 
     @Override
     public String createSubscription(StripeDTO stripeDTO) {
@@ -48,25 +55,22 @@ public class StripeService implements StripeUseCase {
         try {
             Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
 
-            ProductCreateParams productCreateParams =
-                    ProductCreateParams.builder()
-                            .setName(stripeDTO.getName())
-                            .setDescription(stripeDTO.getDescription())
-                            .build();
+            ProductCreateParams productCreateParams = ProductCreateParams.builder()
+                    .setName(stripeDTO.getName())
+                    .setDescription(stripeDTO.getDescription())
+                    .build();
             Product product = Product.create(productCreateParams);
 
-            PriceCreateParams priceCreateParams =
-                    PriceCreateParams.builder()
-                            .setProduct(product.getId())
-                            .setCurrency(CURRENCY)
-                            .setUnitAmount(stripeDTO.getPrice())
-                            .setRecurring(
-                                    PriceCreateParams.Recurring
-                                            .builder()
-                                            .setInterval(PriceCreateParams.Recurring.Interval.MONTH)
-                                            .build()
-                            )
-                            .build();
+            PriceCreateParams priceCreateParams = PriceCreateParams.builder()
+                    .setProduct(product.getId())
+                    .setCurrency(CURRENCY)
+                    .setUnitAmount(stripeDTO.getPrice())
+                    .setRecurring(
+                            PriceCreateParams.Recurring
+                                    .builder()
+                                    .setInterval(PriceCreateParams.Recurring.Interval.MONTH)
+                                    .build())
+                    .build();
             Price productPrice = Price.create(priceCreateParams);
 
             SubscriptionEntity subscriptionEntity = new SubscriptionEntity();
@@ -80,7 +84,7 @@ public class StripeService implements StripeUseCase {
             subscriptionEntity.setCurrency(CURRENCY);
             subscriptionRepository.save(subscriptionEntity);
             return productPrice.getId();
-        }catch (StripeException ex){
+        } catch (StripeException ex) {
             ex.printStackTrace();
         }
 
@@ -100,8 +104,7 @@ public class StripeService implements StripeUseCase {
                             SessionCreateParams.LineItem.builder()
                                     .setPrice(stripeDTO.getPriceId())
                                     .setQuantity(1L)
-                                    .build()
-                    )
+                                    .build())
                     .build();
 
             return Session.create(params);
@@ -140,6 +143,21 @@ public class StripeService implements StripeUseCase {
         }
 
         return list;
+    }
+
+    public boolean assignSubscriptionToUser(String email, String productId) {
+        Optional<UserEntity> userOpt = userRepository.findByEmail(email);
+        Optional<SubscriptionEntity> subOpt = subscriptionRepository.findById(productId);
+
+        if (userOpt.isEmpty() || subOpt.isEmpty()) {
+            return false;
+        }
+
+        UserEntity user = userOpt.get();
+        user.setSubscriptionProductId(productId);
+        userRepository.save(user);
+
+        return true;
     }
 
 }

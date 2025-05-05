@@ -28,8 +28,6 @@ import static com.rnyd.rnyd.utils.constants.Variables.*;
 
 @Service
 public class DietService implements DietUseCase {
-    // TODO: En BBDD hay que cambiar que la tabla nutrition sea independiente
-    // y la user tire del id de esta tabla para asignar una dieta
 
     private final DietRepository dietRepository;
 
@@ -44,73 +42,65 @@ public class DietService implements DietUseCase {
     }
 
     @Override
-    public List<DietDTO> getAllDiets() {
-        List<DietEntity> dietEntities = dietRepository.findAll();
-
-        // Mapear las entidades a DTOs y asignar el URL del PDF
-        List<DietDTO> dietDTOList = dietEntities.stream()
-                .map(dietEntity -> {
-                    DietDTO dietDTO = dietMapper.toDto(dietEntity);
-
-                    // Asignar la URL del PDF si está disponible
-                    dietDTO.setDietUrl("http://localhost:8080"+dietEntity.getDietUrl());  // Este campo debe existir en el DTO
-
-                    return dietDTO;
+    public List<DietDTO> getAllDietsWithUsers() {
+        return dietRepository.findAll().stream()
+                .map(diet -> {
+                    DietDTO dto = dietMapper.toDto(diet);
+                    dto.setDietUrl(diet.getDietUrl());
+                    if (diet.getUser() != null) {
+                        dto.setUserEmail(diet.getUser().getEmail());
+                        dto.setUserName(diet.getUser().getName());
+                    }
+                    return dto;
                 })
                 .toList();
-
-        return dietDTOList;
     }
 
+    public List<DietDTO> getDietsByEmailWithUser(String email) {
+        Optional<UserEntity> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty())
+            return List.of();
 
-    @Override
-    public DietDTO getDietByEmail(String email) {
-        Optional<UserEntity> optionalDietEntity = userRepository.findByEmail(email);
-        assert optionalDietEntity.orElse(null) != null;
-        return dietMapper.toDto(optionalDietEntity.orElse(null).getDiet());
+        UserEntity user = userOpt.get();
+        return user.getDiets().stream()
+                .map(diet -> {
+                    DietDTO dto = dietMapper.toDto(diet);
+                    dto.setDietUrl(diet.getDietUrl());
+                    dto.setUserEmail(user.getEmail());
+                    dto.setUserName(user.getName());
+                    return dto;
+                })
+                .toList();
     }
 
-    @Transactional
-    public DietPDFDTO getPdfByEmail(String email) {
-        Optional<UserEntity> optionalDietEntity = userRepository.findByEmail(email);
-        assert optionalDietEntity.orElse(null) != null;
-
-        return dietMapper.toPDFDto(optionalDietEntity.orElse(null).getDiet());
-    }
-
-    public String updateDiet(String email, DietDTO dietDTO){
-        if(getDietByEmail(email) == null)
-            return null;
-
-        dietRepository.save(dietMapper.toEntity(dietDTO));
-
-        return DIET_UPDATED;
-    }
-
-
-    @Transactional
-    @Override
-    public String updateDietWithPdf(String email, DietPDFDTO dietDTO) {
-        if(getDietByEmail(email) == null)
-            return null;
-
-
-        dietDTO.setDietId(Objects.requireNonNull(userRepository.findByEmail(email).orElse(null)).getDiet().getDietId());
-        dietRepository.save(dietMapper.toEntity(dietDTO));
-
-        return DIET_UPDATED;
-    }
-
-    public String createDiet(DietDTO dietDTO) {
-        DietEntity dietEntity = dietMapper.toEntity(dietDTO);
-        dietEntity.setCreatedAt(LocalDateTime.now());
-        dietRepository.save(dietEntity);
-
-        return DIET_CREATED;
+    public List<DietDTO> getDietsWithoutUser() {
+        return dietRepository.findAll().stream()
+                .filter(diet -> diet.getUser() == null)
+                .map(diet -> {
+                    DietDTO dto = dietMapper.toDto(diet);
+                    dto.setDietUrl(diet.getDietUrl());
+                    return dto;
+                })
+                .toList();
     }
 
     @Transactional
-    public String createDietWithPdf(DietDTO dietDTO, MultipartFile dietPdfFile) {
+    public List<DietDTO> getDietsByEmail(String email) {
+        Optional<UserEntity> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty())
+            return List.of();
+
+        return userOpt.get().getDiets().stream()
+                .map(diet -> {
+                    DietDTO dto = dietMapper.toDto(diet);
+                    dto.setDietUrl(diet.getDietUrl());
+                    return dto;
+                })
+                .toList();
+    }
+
+    @Transactional
+    public String createDiet(DietDTO dietDTO, MultipartFile dietPdfFile) {
         try {
             // Crear un nombre único para el archivo PDF
             String uploadsDir = "public/uploads/";
@@ -124,12 +114,18 @@ public class DietService implements DietUseCase {
             // Crear la URL pública del archivo PDF
             String dietUrl = "/uploads/" + fileName;
 
-            // Guardar la dieta en la base de datos
+            // Map DTO to Entity
             DietEntity dietEntity = new DietEntity();
             dietEntity.setDietName(dietDTO.getDietName());
             dietEntity.setNote(dietDTO.getNote());
-            dietEntity.setDietPdf(dietPdfFile.getBytes());  // Guardar el archivo PDF
-            dietEntity.setDietUrl(dietUrl);  // Guardar la URL
+            dietEntity.setStartDate(dietDTO.getStartDate());
+            dietEntity.setCreatedAt(dietDTO.getCreatedAt());
+            dietEntity.setPreferences(dietDTO.getPreferences());
+            dietEntity.setAllergies(dietDTO.getAllergies());
+            dietEntity.setDietPdf(dietPdfFile.getBytes());
+            dietEntity.setDietUrl(dietUrl);
+
+            // Save to DB
             dietRepository.save(dietEntity);
 
             return "Diet created successfully!";
@@ -139,9 +135,53 @@ public class DietService implements DietUseCase {
         }
     }
 
+    @Transactional
+    public String updateDietWithOptionalPdf(Long dietId, DietDTO dietDTO, MultipartFile dietPdfFile) {
+        Optional<DietEntity> dietOpt = dietRepository.findById(dietId);
+        if (dietOpt.isEmpty())
+            return null;
+
+        DietEntity diet = dietOpt.get();
+
+        // Update basic fields
+        diet.setDietName(dietDTO.getDietName());
+        diet.setNote(dietDTO.getNote());
+        diet.setStartDate(dietDTO.getStartDate());
+        diet.setCreatedAt(dietDTO.getCreatedAt());
+        diet.setPreferences(dietDTO.getPreferences());
+        diet.setAllergies(dietDTO.getAllergies());
+
+        // Handle PDF replacement if a new one is provided
+        if (dietPdfFile != null && !dietPdfFile.isEmpty()) {
+            // Delete the old file from the file system
+            try {
+                if (diet.getDietUrl() != null) {
+                    Path oldFilePath = Paths.get("public", diet.getDietUrl().replace("/uploads/", ""));
+                    Files.deleteIfExists(oldFilePath);
+                }
+
+                // Save the new PDF
+                String uploadsDir = "public/uploads/";
+                String fileName = UUID.randomUUID().toString() + "_" + dietPdfFile.getOriginalFilename();
+                Path filePath = Paths.get(uploadsDir, fileName);
+                Files.copy(dietPdfFile.getInputStream(), filePath);
+
+                String dietUrl = "/uploads/" + fileName;
+                diet.setDietUrl(dietUrl);
+                diet.setDietPdf(dietPdfFile.getBytes());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Error while updating the diet PDF.";
+            }
+        }
+
+        dietRepository.save(diet);
+        return DIET_UPDATED;
+    }
 
     @Transactional
-    public String assignDiet(String email, DietDTO dietDTO){
+    public String assignDiet(String email, DietDTO dietDTO) {
         Optional<DietEntity> dietOpt = dietRepository.findById(dietDTO.getDietId());
         Optional<UserEntity> userOpt = userRepository.findByEmail(email);
 
@@ -152,40 +192,57 @@ public class DietService implements DietUseCase {
         DietEntity diet = dietOpt.get();
         UserEntity user = userOpt.get();
 
-        user.setDiet(diet);
+        // ✅ Set the owning side of the relationship
+        diet.setUser(user);
 
-        userRepository.save(user);
-        dietRepository.save(diet);
+        // Avoid duplicates if already assigned
+        if (!user.getDiets().contains(diet)) {
+            user.getDiets().add(diet);
+        }
+
+        userRepository.save(user); // saves both due to CascadeType.ALL
 
         return DIET_ASSIGNED;
     }
 
+    public DietDTO getDietById(Long id) {
+        Optional<DietEntity> dietOpt = dietRepository.findById(id);
 
-    public String deleteDiet(String id){
-        UserEntity user = userRepository.findByEmail(id).orElse(null);
-
-        if (user == null || user.getDiet() == null)
+        if (dietOpt.isEmpty())
             return null;
 
-        user.setDiet(null);
-        userRepository.save(user);
+        DietDTO dto = dietMapper.toDto(dietOpt.get());
 
-        return DIET_DELETED;
+        return dto;
     }
 
-    @Override
-    public PreferencesAndAllergiesDTO getPreferencesAndAllergies(String email) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+    @Transactional
+    public boolean deleteDietById(Long id) {
+        Optional<DietEntity> dietOpt = dietRepository.findById(id);
+        if (dietOpt.isEmpty())
+            return false;
 
-        if(userEntityOptional.isEmpty())
-            return null;
+        DietEntity diet = dietOpt.get();
 
-        DietEntity diet = userEntityOptional.get().getDiet();
+        // Optionally delete the PDF file
+        if (diet.getDietUrl() != null) {
+            try {
+                Path filePath = Paths.get("public", diet.getDietUrl().replace("/uploads/", ""));
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
-        if(diet == null)
-            return null;
+        // Remove association from user
+        if (diet.getUser() != null) {
+            UserEntity user = diet.getUser();
+            user.getDiets().remove(diet);
+            diet.setUser(null);
+        }
 
-        return new PreferencesAndAllergiesDTO(diet.getPreferences(), diet.getAllergies());
+        dietRepository.delete(diet);
+        return true;
     }
+
 }
-

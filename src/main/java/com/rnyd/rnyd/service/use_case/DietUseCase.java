@@ -1,25 +1,26 @@
 package com.rnyd.rnyd.service.use_case;
 
 import com.rnyd.rnyd.dto.diet.DietDTO;
-import com.rnyd.rnyd.dto.diet.DietPDFDTO;
-import com.rnyd.rnyd.dto.diet.PreferencesAndAllergiesDTO;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface DietUseCase {
 
- List<DietDTO> getAllDiets();
+    List<DietDTO> getAllDietsWithUsers();
 
-     DietDTO getDietByEmail(String email);
+    List<DietDTO> getDietsWithoutUser();
 
-     String updateDiet(String email, DietDTO dietDTO);
-    String updateDietWithPdf(String email, DietPDFDTO dietDTO);
+    List<DietDTO> getDietsByEmailWithUser(String email);
 
-     String createDiet(DietDTO dietDTO);
+    List<DietDTO> getDietsByEmail(String email);
 
-     String assignDiet(String email, DietDTO dietDTO);
+    DietDTO getDietById(Long id);
 
-     String deleteDiet(String id);
+    String createDiet(DietDTO dietDTO, MultipartFile dietPdfFile);
 
-     PreferencesAndAllergiesDTO getPreferencesAndAllergies(String email);
+    String assignDiet(String email, DietDTO dietDTO);
+    boolean deleteDietById(Long id);
+
 }
